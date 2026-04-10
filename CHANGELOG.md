@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-04-11
+
+### Added
+- **vibe summary command**: Provides detailed work summaries including runtime, log snippets, and changed files (diff stats).
+- **vibe init command**: Easily initialize project-level configuration with default settings.
+- **vibe config command**: View or update project settings directly from the CLI.
+- **Core Configuration System**: Introduced `config.ts` module to handle project settings like `defaultAgent` and `logRetentionDays` stored in `.vibeswitch.json`.
+
+## [0.3.0] - 2026-04-10
+
+### Added
+- **vibe clean command**: Automates the cleanup of completed, stopped, or failed tasks, including their worktrees and log files.
+- **vibe agents command**: Lists all supported agent adapters and their installation status.
+- **Desktop Notifications**: Added macOS desktop notifications via `osascript` to alert users when an agent task completes or fails.
+- **Auto Task Status Update**: Agent task status (completed/failed) and stop time are now automatically updated upon process exit.
+- **Multi-language Documentation**: Rewrote `README.md` in English and added `README.zh-TW.md` for Traditional Chinese support.
+
 ## [0.1.0] - 2026-04-10
 
 ### Added
