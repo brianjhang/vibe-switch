@@ -9,6 +9,9 @@ import { logCommand } from './commands/log.js';
 import { watchCommand } from './commands/watch.js';
 import { cleanCommand } from './commands/clean.js';
 import { agentsCommand } from './commands/agents.js';
+import { summaryCommand } from './commands/summary.js';
+import { initCommand } from './commands/init.js';
+import { configCommand } from './commands/config.js';
 
 const program = new Command();
 
@@ -65,6 +68,27 @@ program
   .command('agents')
   .description('列出已安裝的 Agent')
   .action(agentsCommand);
+
+// vibe summary <branch>
+program
+  .command('summary')
+  .description('查看 Agent 的工作摘要')
+  .argument('<branch>', '任務分支名')
+  .action(summaryCommand);
+
+// vibe init
+program
+  .command('init')
+  .description('初始化項目的 vibe-switch 配置')
+  .action(initCommand);
+
+// vibe config [key] [value]
+program
+  .command('config')
+  .description('查看或設定配置')
+  .argument('[key]', '配置鍵')
+  .argument('[value]', '配置值')
+  .action(configCommand);
 
 // vibe handoff <branch> --to <agent>
 program
