@@ -5,6 +5,7 @@ import { runCommand } from './commands/run.js';
 import { statusCommand } from './commands/status.js';
 import { stopCommand } from './commands/stop.js';
 import { handoffCommand } from './commands/handoff.js';
+import { logCommand } from './commands/log.js';
 
 const program = new Command();
 
@@ -35,6 +36,13 @@ program
   .argument('[branch]', '要停止的任務分支')
   .option('--all', '停止所有 Agent')
   .action(stopCommand);
+
+// vibe log <branch>
+program
+  .command('log')
+  .description('查看 Agent 任務的最近輸出')
+  .argument('<branch>', '任務分支名')
+  .action(logCommand);
 
 // vibe handoff <branch> --to <agent>
 program

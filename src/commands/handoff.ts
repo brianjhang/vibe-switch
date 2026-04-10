@@ -83,10 +83,11 @@ export async function handoffCommand(branch: string, options: HandoffOptions): P
 
   // 7. 啟動目標 Agent，帶上上下文
   await output.info(`啟動 ${targetName}，注入上下文...`);
-  const { pid } = spawnAgent(targetAdapter, prompt, sourceTask.projectDir);
 
-  // 8. 記錄新任務
+  // 8. 啟動目標 Agent 並記錄新任務
   const newTaskId = `${targetAgentId}-${Date.now()}`;
+  const { pid } = spawnAgent(targetAdapter, prompt, sourceTask.projectDir, newTaskId);
+
   addTask({
     id: newTaskId,
     agent: targetAgentId,
