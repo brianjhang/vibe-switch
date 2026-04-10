@@ -1,7 +1,7 @@
 {
   "name": "vibe-switch",
-  "version": "1.0.1",
-  "description": "AI Agent 的 tmux — 一行命令啟動多 Agent 並行工作，無縫交接上下文",
+  "version": "1.0.2",
+  "description": "tmux for AI Agents — Orchestrate multiple AI coding agents in parallel with one command",
   "main": "dist/cli.js",
   "bin": {
     "vibe": "./dist/cli.js"
@@ -31,8 +31,15 @@
     "claude",
     "tmux"
   ],
-  "author": "Brian",
+  "author": "Brian Jhang (https://brianjhang.com)",
   "license": "MIT",
+  "homepage": "https://github.com/brianjhang/vibe-switch#readme",
+  "bugs": {
+    "url": "https://github.com/brianjhang/vibe-switch/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/brianjhang/vibe-switch"

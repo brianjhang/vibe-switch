@@ -1,5 +1,9 @@
 # 🔄 Vibe-Switch
 
+[![npm version](https://img.shields.io/npm/v/vibe-switch.svg)](https://www.npmjs.com/package/vibe-switch)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](https://nodejs.org)
+
 > **tmux for AI Agents** — Orchestrate multiple AI coding agents in parallel with one command.
 
 [繁體中文](./README.zh-TW.md) | English
@@ -116,6 +120,10 @@ vibe clean         # Clean up finished tasks and worktrees
 - **Adapter Pattern:** Modular design allows easy integration of new AI agent CLIs.
 - **JSON File Storage:** Task metadata, PIDs, and state are persisted locally — no database needed.
 
+## Author
+
+Created by [Brian Jhang](https://brianjhang.com) — building tools for the one-person company era.
+
 ## License
 
-MIT
+[MIT](./LICENSE)

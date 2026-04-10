@@ -1,5 +1,9 @@
 # 🔄 Vibe-Switch
 
+[![npm version](https://img.shields.io/npm/v/vibe-switch.svg)](https://www.npmjs.com/package/vibe-switch)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](https://nodejs.org)
+
 > **AI Agent 的 tmux** — 一行命令啟動多 Agent 並行工作，無縫交接上下文。
 
 [English](./README.md) | 繁體中文
@@ -112,6 +116,10 @@ vibe clean         # 清理已完成的任務和 worktree
 - **Adapter 模式**：新增 Agent 只需加一個適配器文件。
 - **JSON 存儲**：任務狀態存在本地 JSON 文件，輕量零依賴。
 
+## 作者
+
+由 [Brian Jhang](https://brianjhang.com) 創建 — 為一人公司時代打造工具。
+
 ## License
 
-MIT
+[MIT](./LICENSE)
