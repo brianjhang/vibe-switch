@@ -1,0 +1,48 @@
+#!/usr/bin/env node
+
+import { Command } from 'commander';
+import { runCommand } from './commands/run.js';
+import { statusCommand } from './commands/status.js';
+import { stopCommand } from './commands/stop.js';
+import { handoffCommand } from './commands/handoff.js';
+
+const program = new Command();
+
+program
+  .name('vibe')
+  .description('AI Agent 的 tmux — 一行命令啟動多 Agent 並行工作')
+  .version('0.1.0');
+
+// vibe run "task description" --agent claude
+program
+  .command('run')
+  .description('啟動一個 Agent 執行任務')
+  .argument('<task>', '任務描述')
+  .option('-a, --agent <agent>', 'AI Agent 名稱 (claude/codex/gemini/antigravity/openclaw)', 'claude')
+  .option('-b, --branch <branch>', '自定義 Git 分支名')
+  .action(runCommand);
+
+// vibe status
+program
+  .command('status')
+  .description('查看所有 Agent 的工作狀態')
+  .action(statusCommand);
+
+// vibe stop <branch|--all>
+program
+  .command('stop')
+  .description('停止 Agent')
+  .argument('[branch]', '要停止的任務分支')
+  .option('--all', '停止所有 Agent')
+  .action(stopCommand);
+
+// vibe handoff <branch> --to <agent>
+program
+  .command('handoff')
+  .description('將一個 Agent 的工作上下文交接給另一個 Agent')
+  .argument('<branch>', '源任務的分支名')
+  .requiredOption('--to <agent>', '目標 Agent')
+  .option('-m, --message <message>', '額外的交接說明')
+  .action(handoffCommand);
+
+program.parse();

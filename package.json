@@ -1,0 +1,30 @@
+{
+  "name": "vibe-switch",
+  "version": "0.1.0",
+  "description": "AI Agent 的 tmux — 一行命令啟動多 Agent 並行工作，無縫交接上下文",
+  "main": "dist/cli.js",
+  "bin": {
+    "vibe": "./dist/cli.js"
+  },
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "build": "tsc",
+    "start": "node dist/cli.js",
+    "test": "tsx src/cli.ts status"
+  },
+  "keywords": ["ai", "agent", "cli", "vibe-coding", "orchestrator"],
+  "author": "Brian",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "chalk": "^5.6.2",
+    "cli-table3": "^0.6.5",
+    "commander": "^14.0.3",
+    "simple-git": "^3.35.2",
+    "typescript": "^6.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "tsx": "^4.21.0"
+  }
+}
