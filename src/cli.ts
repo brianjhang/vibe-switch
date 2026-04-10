@@ -18,7 +18,7 @@ const program = new Command();
 program
   .name('vibe')
   .description('AI Agent 的 tmux — 一行命令啟動多 Agent 並行工作')
-  .version('0.1.0');
+  .version('1.0.0');
 
 // vibe run "task description" --agent claude
 program
