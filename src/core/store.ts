@@ -51,7 +51,8 @@ export function getTask(id: string): TaskRecord | undefined {
 }
 
 export function getTaskByBranch(branch: string): TaskRecord | undefined {
-  return loadTasks().find(t => t.branch === branch);
+  const matches = loadTasks().filter(t => t.branch === branch);
+  return matches.find(t => t.status === 'running') ?? matches[matches.length - 1];
 }
 
 export function getAllTasks(): TaskRecord[] {

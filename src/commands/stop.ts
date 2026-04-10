@@ -4,10 +4,29 @@
 
 import { getAllTasks, updateTask, getTaskByBranch } from '../core/store.js';
 import { killProcess } from '../core/process.js';
+import { removeWorktree } from '../core/git.js';
+import { TaskRecord } from '../adapters/types.js';
 import * as output from '../utils/output.js';
 
 interface StopOptions {
   all?: boolean;
+}
+
+function getErrorMessage(err: unknown): string {
+  return err instanceof Error ? err.message : String(err);
+}
+
+async function cleanupWorktree(task: TaskRecord): Promise<void> {
+  if (!task.worktreePath) {
+    return;
+  }
+
+  try {
+    await removeWorktree(task.worktreePath);
+    await output.info(`已移除 worktree: ${task.worktreePath}`);
+  } catch (err) {
+    await output.warn(`Worktree 清理失敗 (${task.worktreePath}): ${getErrorMessage(err)}`);
+  }
 }
 
 export async function stopCommand(branch: string | undefined, options: StopOptions): Promise<void> {
@@ -42,6 +61,8 @@ export async function stopCommand(branch: string | undefined, options: StopOptio
     await output.warn(`進程 ${task.pid} 可能已經退出`);
     updateTask(task.id, { status: 'completed', stoppedAt: Date.now() });
   }
+
+  await cleanupWorktree(task);
 }
 
 async function stopAll(): Promise<void> {
@@ -59,6 +80,7 @@ async function stopAll(): Promise<void> {
       status: killed ? 'stopped' : 'completed',
       stoppedAt: Date.now(),
     });
+    await cleanupWorktree(task);
     stopped++;
   }
 

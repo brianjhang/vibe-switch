@@ -5,6 +5,7 @@
 
 import { simpleGit, SimpleGit } from 'simple-git';
 import { createHash } from 'crypto';
+import { basename, join, resolve } from 'path';
 
 /**
  * 生成 vibe 分支名
@@ -16,7 +17,7 @@ export function generateBranchName(agent: string, task: string): string {
 }
 
 /**
- * 創建並切換到新分支
+ * 創建新分支
  */
 export async function createBranch(cwd: string, branchName: string): Promise<void> {
   const git: SimpleGit = simpleGit(cwd);
@@ -27,8 +28,35 @@ export async function createBranch(cwd: string, branchName: string): Promise<voi
     throw new Error(`${cwd} 不是一個 Git 倉庫`);
   }
 
-  // 從當前 HEAD 創建分支
-  await git.checkoutLocalBranch(branchName);
+  // 從當前 HEAD 創建分支，但不切換工作區
+  await git.raw(['branch', branchName]);
+}
+
+/**
+ * 創建隔離的 Git worktree，讓多個 Agent 可以並行工作
+ */
+export async function createWorktree(projectDir: string, branchName: string): Promise<string> {
+  const git: SimpleGit = simpleGit(projectDir);
+
+  // 確保是 git repo
+  const isRepo = await git.checkIsRepo();
+  if (!isRepo) {
+    throw new Error(`${projectDir} 不是一個 Git 倉庫`);
+  }
+
+  const repoName = basename(projectDir);
+  const relativeWorktreePath = join('..', `${repoName}-${branchName}`);
+
+  await git.raw(['worktree', 'add', relativeWorktreePath, branchName]);
+  return resolve(projectDir, relativeWorktreePath);
+}
+
+/**
+ * 移除指定的 Git worktree
+ */
+export async function removeWorktree(worktreePath: string): Promise<void> {
+  const git: SimpleGit = simpleGit(worktreePath);
+  await git.raw(['worktree', 'remove', worktreePath]);
 }
 
 /**

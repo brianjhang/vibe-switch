@@ -48,7 +48,7 @@ export async function statusCommand(): Promise<void> {
     // 嘗試獲取修改文件數
     let fileCount = '-';
     try {
-      const files = await getModifiedFiles(task.projectDir);
+      const files = await getModifiedFiles(task.worktreePath || task.projectDir);
       fileCount = files.length.toString();
     } catch {
       fileCount = '?';
