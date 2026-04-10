@@ -1,6 +1,6 @@
 {
   "name": "vibe-switch",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AI Agent 的 tmux — 一行命令啟動多 Agent 並行工作，無縫交接上下文",
   "main": "dist/cli.js",
   "bin": {
