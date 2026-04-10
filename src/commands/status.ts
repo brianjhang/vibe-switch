@@ -11,9 +11,15 @@ import { statusEmoji } from '../utils/output.js';
 
 export async function statusCommand(): Promise<void> {
   // 先清理失效的任務
-  cleanupStaleTasks();
-
-  const tasks = getAllTasks();
+  let tasks: ReturnType<typeof getAllTasks>;
+  try {
+    cleanupStaleTasks();
+    tasks = getAllTasks();
+  } catch {
+    await output.error('Task state corrupted. Run: rm ~/.vibe-switch/tasks.json to reset.');
+    process.exit(1);
+    return;
+  }
 
   if (tasks.length === 0) {
     await output.info('目前沒有任何 Agent 在工作。');

@@ -7,12 +7,22 @@ import { readFileSync, writeFileSync } from 'fs';
 import { TaskRecord } from '../adapters/types.js';
 import { getTasksFilePath, ensureDir, getVibeDir } from '../utils/paths.js';
 
+function isMissingFileError(err: unknown): boolean {
+  return typeof err === 'object'
+    && err !== null
+    && 'code' in err
+    && (err as NodeJS.ErrnoException).code === 'ENOENT';
+}
+
 function loadTasks(): TaskRecord[] {
   try {
     const data = readFileSync(getTasksFilePath(), 'utf-8');
     return JSON.parse(data);
-  } catch {
-    return [];
+  } catch (err) {
+    if (isMissingFileError(err)) {
+      return [];
+    }
+    throw err;
   }
 }
 

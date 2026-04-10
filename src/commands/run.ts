@@ -5,13 +5,22 @@
 import { getAdapter } from '../adapters/index.js';
 import { AgentId } from '../adapters/types.js';
 import { spawnAgent } from '../core/process.js';
-import { createBranch, generateBranchName, getCurrentBranch } from '../core/git.js';
+import { createBranch, generateBranchName } from '../core/git.js';
 import { addTask } from '../core/store.js';
 import * as output from '../utils/output.js';
 
 interface RunOptions {
   agent: string;
   branch?: string;
+}
+
+function getErrorMessage(err: unknown): string {
+  return err instanceof Error ? err.message : String(err);
+}
+
+function isNotGitRepositoryError(err: unknown): boolean {
+  const message = getErrorMessage(err).toLowerCase();
+  return message.includes('not a git repository') || message.includes('不是一個 git 倉庫');
 }
 
 export async function runCommand(task: string, options: RunOptions): Promise<void> {
@@ -29,6 +38,7 @@ export async function runCommand(task: string, options: RunOptions): Promise<voi
   if (!installed) {
     await output.error(`${adapter.name} 未安裝或不在 PATH 中`);
     process.exit(1);
+    return;
   }
 
   const cwd = process.cwd();
@@ -37,10 +47,17 @@ export async function runCommand(task: string, options: RunOptions): Promise<voi
   const branchName = options.branch || generateBranchName(agentId, task);
 
   try {
-    // 記住原始分支，以便後面恢復
-    const originalBranch = await getCurrentBranch(cwd);
+    try {
+      await createBranch(cwd, branchName);
+    } catch (err) {
+      if (isNotGitRepositoryError(err)) {
+        await output.error('This directory is not a git repository. Please run vibe from a project with git initialized.');
+        process.exit(1);
+        return;
+      }
+      throw err;
+    }
 
-    await createBranch(cwd, branchName);
     await output.info(`已創建分支: ${branchName}`);
 
     // 3. 啟動 Agent 進程
@@ -73,8 +90,9 @@ export async function runCommand(task: string, options: RunOptions): Promise<voi
     await output.info(`分支: ${branchName}`);
     await output.info(`查看狀態: vibe status`);
 
-  } catch (err: any) {
-    await output.error(`啟動失敗: ${err.message}`);
+  } catch (err) {
+    await output.error(`啟動失敗: ${getErrorMessage(err)}`);
     process.exit(1);
+    return;
   }
 }

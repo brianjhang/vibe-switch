@@ -1,14 +1,31 @@
 import { execSync } from 'child_process';
 import { existsSync, mkdirSync } from 'fs';
 import { homedir } from 'os';
-import { join } from 'path';
+import { delimiter, join } from 'path';
+
+/**
+ * CLI 常見安裝路徑（Homebrew / npm global）
+ */
+export function getExpandedPath(): string {
+  const extraPaths = [
+    '/opt/homebrew/bin',
+    join(homedir(), '.npm-global', 'bin'),
+  ];
+
+  return [process.env.PATH, ...extraPaths]
+    .filter((entry): entry is string => Boolean(entry))
+    .join(delimiter);
+}
 
 /**
  * 檢查命令是否存在
  */
 export function commandExists(cmd: string): boolean {
   try {
-    execSync(`which ${cmd}`, { stdio: 'ignore' });
+    execSync(`which ${cmd}`, {
+      stdio: 'ignore',
+      env: { ...process.env, PATH: getExpandedPath() },
+    });
     return true;
   } catch {
     return false;

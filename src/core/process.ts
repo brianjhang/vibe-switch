@@ -4,10 +4,15 @@
 
 import { spawn, ChildProcess } from 'child_process';
 import { AgentAdapter } from '../adapters/types.js';
+import { commandExists, getExpandedPath } from '../utils/paths.js';
 
 interface SpawnedAgent {
   process: ChildProcess;
   pid: number;
+}
+
+function getCommandName(command: string): string {
+  return command.trim().split(/\s+/)[0] ?? '';
 }
 
 /**
@@ -20,6 +25,12 @@ export function spawnAgent(
   cwd: string,
 ): SpawnedAgent {
   const command = adapter.buildCommand(task, cwd);
+  const commandName = getCommandName(command);
+  const path = getExpandedPath();
+
+  if (!commandName || !commandExists(commandName)) {
+    throw new Error(`${adapter.name} command not found. Please install it or add it to PATH.`);
+  }
 
   // 使用 shell 模式，讓各 Agent 的原生命令格式直接工作
   const child = spawn(command, {
@@ -27,6 +38,7 @@ export function spawnAgent(
     shell: true,
     stdio: 'ignore',    // 在背景運行，不佔終端
     detached: true,      // 脫離父進程
+    env: { ...process.env, PATH: path },
   });
 
   // 讓子進程獨立運行，不隨主進程退出
