@@ -3,8 +3,9 @@
  */
 
 import { spawn, ChildProcess } from 'child_process';
+import { closeSync, openSync } from 'fs';
 import { AgentAdapter } from '../adapters/types.js';
-import { commandExists, getExpandedPath } from '../utils/paths.js';
+import { commandExists, ensureDir, getExpandedPath, getLogFilePath, getLogsDir } from '../utils/paths.js';
 
 interface SpawnedAgent {
   process: ChildProcess;
@@ -23,6 +24,7 @@ export function spawnAgent(
   adapter: AgentAdapter,
   task: string,
   cwd: string,
+  taskId: string,
 ): SpawnedAgent {
   const command = adapter.buildCommand(task, cwd);
   const commandName = getCommandName(command);
@@ -32,14 +34,26 @@ export function spawnAgent(
     throw new Error(`${adapter.name} command not found. Please install it or add it to PATH.`);
   }
 
+  ensureDir(getLogsDir());
+  const logFd = openSync(getLogFilePath(taskId), 'a');
+
   // 使用 shell 模式，讓各 Agent 的原生命令格式直接工作
-  const child = spawn(command, {
-    cwd,
-    shell: true,
-    stdio: 'ignore',    // 在背景運行，不佔終端
-    detached: true,      // 脫離父進程
-    env: { ...process.env, PATH: path },
-  });
+  let child: ChildProcess | undefined;
+  try {
+    child = spawn(command, {
+      cwd,
+      shell: true,
+      stdio: ['ignore', logFd, logFd], // 在背景運行，stdout/stderr 寫入任務日誌
+      detached: true,                  // 脫離父進程
+      env: { ...process.env, PATH: path },
+    });
+  } finally {
+    closeSync(logFd);
+  }
+
+  if (!child) {
+    throw new Error(`無法啟動 Agent: ${adapter.name}`);
+  }
 
   // 讓子進程獨立運行，不隨主進程退出
   child.unref();

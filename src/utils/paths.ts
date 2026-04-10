@@ -48,6 +48,20 @@ export function getTasksFilePath(): string {
 }
 
 /**
+ * Agent 輸出日誌目錄
+ */
+export function getLogsDir(): string {
+  return join(getVibeDir(), 'logs');
+}
+
+/**
+ * Agent 任務日誌文件路徑
+ */
+export function getLogFilePath(taskId: string): string {
+  return join(getLogsDir(), `${taskId}.log`);
+}
+
+/**
  * 上下文快照目錄
  */
 export function getSnapshotsDir(): string {

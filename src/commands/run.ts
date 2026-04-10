@@ -64,10 +64,10 @@ export async function runCommand(task: string, options: RunOptions): Promise<voi
     const label = await output.agentLabel(adapter.icon, adapter.name);
     await output.info(`啟動 ${label} ...`);
 
-    const { pid } = spawnAgent(adapter, task, cwd);
-
-    // 4. 記錄任務
+    // 4. 啟動 Agent 進程並記錄任務
     const taskId = `${agentId}-${Date.now()}`;
+    const { pid } = spawnAgent(adapter, task, cwd, taskId);
+
     addTask({
       id: taskId,
       agent: agentId,
