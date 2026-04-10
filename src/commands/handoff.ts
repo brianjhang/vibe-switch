@@ -5,9 +5,9 @@
 import { getAdapter } from '../adapters/index.js';
 import { AgentId } from '../adapters/types.js';
 import { getTaskByBranch, addTask, updateTask } from '../core/store.js';
-import { createSnapshot, formatSnapshotAsPrompt, loadSnapshot } from '../core/context.js';
+import { createSnapshot, formatSnapshotAsPrompt } from '../core/context.js';
 import { spawnAgent, killProcess } from '../core/process.js';
-import { checkoutBranch, getCurrentBranch } from '../core/git.js';
+import { checkoutBranch } from '../core/git.js';
 import * as output from '../utils/output.js';
 
 interface HandoffOptions {
@@ -37,6 +37,7 @@ export async function handoffCommand(branch: string, options: HandoffOptions): P
   const sourceAdapter = getAdapter(sourceTask.agent);
   const sourceName = sourceAdapter?.name || sourceTask.agent;
   const targetName = targetAdapter.name;
+  const sourceCwd = sourceTask.worktreePath || sourceTask.projectDir;
 
   await output.info(`開始交接: ${sourceName} → ${targetName}`);
 
@@ -53,7 +54,7 @@ export async function handoffCommand(branch: string, options: HandoffOptions): P
     sourceTask.agent,
     sourceTask.task,
     sourceTask.branch,
-    sourceTask.projectDir,
+    sourceCwd,
   );
 
   await output.info(`已修改文件: ${snapshot.modifiedFiles.length} 個`);
@@ -76,7 +77,7 @@ export async function handoffCommand(branch: string, options: HandoffOptions): P
 
   // 6. 切換到源任務的分支（確保目標 Agent 在正確分支上工作）
   try {
-    await checkoutBranch(sourceTask.projectDir, sourceTask.branch);
+    await checkoutBranch(sourceCwd, sourceTask.branch);
   } catch {
     // 可能已經在正確分支上
   }
@@ -86,7 +87,7 @@ export async function handoffCommand(branch: string, options: HandoffOptions): P
 
   // 8. 啟動目標 Agent 並記錄新任務
   const newTaskId = `${targetAgentId}-${Date.now()}`;
-  const { pid } = spawnAgent(targetAdapter, prompt, sourceTask.projectDir, newTaskId);
+  const { pid } = spawnAgent(targetAdapter, prompt, sourceCwd, newTaskId);
 
   addTask({
     id: newTaskId,
@@ -97,6 +98,7 @@ export async function handoffCommand(branch: string, options: HandoffOptions): P
     status: 'running',
     startedAt: Date.now(),
     projectDir: sourceTask.projectDir,
+    worktreePath: sourceTask.worktreePath,
   });
 
   await output.success(`上下文交接完成！`);

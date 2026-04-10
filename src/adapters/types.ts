@@ -55,4 +55,5 @@ export interface TaskRecord {
   startedAt: number;
   stoppedAt?: number;
   projectDir: string;
+  worktreePath?: string;
 }

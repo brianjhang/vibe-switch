@@ -5,7 +5,7 @@
 import { getAdapter } from '../adapters/index.js';
 import { AgentId } from '../adapters/types.js';
 import { spawnAgent } from '../core/process.js';
-import { createBranch, generateBranchName } from '../core/git.js';
+import { createBranch, createWorktree, generateBranchName, removeWorktree } from '../core/git.js';
 import { addTask } from '../core/store.js';
 import * as output from '../utils/output.js';
 
@@ -45,6 +45,7 @@ export async function runCommand(task: string, options: RunOptions): Promise<voi
 
   // 2. 創建 Git 分支
   const branchName = options.branch || generateBranchName(agentId, task);
+  let worktreePath: string | undefined;
 
   try {
     try {
@@ -60,13 +61,17 @@ export async function runCommand(task: string, options: RunOptions): Promise<voi
 
     await output.info(`已創建分支: ${branchName}`);
 
-    // 3. 啟動 Agent 進程
+    // 3. 創建隔離 worktree
+    worktreePath = await createWorktree(cwd, branchName);
+    await output.info(`已創建 worktree: ${worktreePath}`);
+
+    // 4. 啟動 Agent 進程
     const label = await output.agentLabel(adapter.icon, adapter.name);
     await output.info(`啟動 ${label} ...`);
 
-    // 4. 啟動 Agent 進程並記錄任務
+    // 5. 啟動 Agent 進程並記錄任務
     const taskId = `${agentId}-${Date.now()}`;
-    const { pid } = spawnAgent(adapter, task, cwd, taskId);
+    const { pid } = spawnAgent(adapter, task, worktreePath, taskId);
 
     addTask({
       id: taskId,
@@ -77,20 +82,24 @@ export async function runCommand(task: string, options: RunOptions): Promise<voi
       status: 'running',
       startedAt: Date.now(),
       projectDir: cwd,
+      worktreePath,
     });
-
-    // 5. 切回原始分支，讓用戶可以繼續操作
-    // 注意：Agent 進程已在 branchName 分支的 cwd 中運行
-    // 但由於 detached，切回不影響它
-    // 不過 git checkout 會影響工作區...
-    // MVP 先保持在新分支上，讓用戶手動切回
 
     await output.success(`${adapter.name} 已在背景啟動 (PID: ${pid})`);
     await output.info(`任務: ${task}`);
     await output.info(`分支: ${branchName}`);
+    await output.info(`Worktree: ${worktreePath}`);
     await output.info(`查看狀態: vibe status`);
 
   } catch (err) {
+    if (worktreePath) {
+      try {
+        await removeWorktree(worktreePath);
+      } catch {
+        // 啟動失敗時盡力清理已創建的 worktree
+      }
+    }
+
     await output.error(`啟動失敗: ${getErrorMessage(err)}`);
     process.exit(1);
     return;
