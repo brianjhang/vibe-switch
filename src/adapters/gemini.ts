@@ -14,7 +14,7 @@ export const geminiAdapter: AgentAdapter = {
 
   buildCommand(task: string, cwd: string): string {
     const escapedTask = task.replace(/"/g, '\\"');
-    return `gemini -p "${escapedTask}"`;
+    return `gemini -p "${escapedTask}" --yolo`;
   },
 
   resolveSessionPath(): string | null {

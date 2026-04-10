@@ -14,7 +14,7 @@ export const codexAdapter: AgentAdapter = {
 
   buildCommand(task: string, cwd: string): string {
     const escapedTask = task.replace(/"/g, '\\"');
-    return `codex --approval-mode full-auto "${escapedTask}"`;
+    return `codex exec --full-auto "${escapedTask}"`;
   },
 
   resolveSessionPath(): string | null {
