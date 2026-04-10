@@ -6,6 +6,7 @@ import { statusCommand } from './commands/status.js';
 import { stopCommand } from './commands/stop.js';
 import { handoffCommand } from './commands/handoff.js';
 import { logCommand } from './commands/log.js';
+import { watchCommand } from './commands/watch.js';
 
 const program = new Command();
 
@@ -42,7 +43,14 @@ program
   .command('log')
   .description('查看 Agent 任務的最近輸出')
   .argument('<branch>', '任務分支名')
+  .option('-f, --follow', 'Follow log output in real-time')
   .action(logCommand);
+
+// vibe watch
+program
+  .command('watch')
+  .description('實時查看所有 Agent 的輸出')
+  .action(watchCommand);
 
 // vibe handoff <branch> --to <agent>
 program
