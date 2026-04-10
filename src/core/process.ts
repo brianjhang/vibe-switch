@@ -2,9 +2,10 @@
  * Agent 進程管理
  */
 
-import { spawn, ChildProcess } from 'child_process';
+import { spawn, ChildProcess, execSync } from 'child_process';
 import { closeSync, openSync } from 'fs';
 import { AgentAdapter } from '../adapters/types.js';
+import { updateTask } from './store.js';
 import { commandExists, ensureDir, getExpandedPath, getLogFilePath, getLogsDir } from '../utils/paths.js';
 
 interface SpawnedAgent {
@@ -14,6 +15,19 @@ interface SpawnedAgent {
 
 function getCommandName(command: string): string {
   return command.trim().split(/\s+/)[0] ?? '';
+}
+
+function appleScriptString(value: string): string {
+  return `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+}
+
+function shellQuote(value: string): string {
+  return `'${value.replace(/'/g, "'\\''")}'`;
+}
+
+function notifyAgentFinished(agentName: string): void {
+  const script = `display notification ${appleScriptString(`${agentName} finished`)} with title ${appleScriptString('Vibe-Switch')}`;
+  execSync(`osascript -e ${shellQuote(script)}`, { stdio: 'ignore' });
 }
 
 /**
@@ -54,6 +68,23 @@ export function spawnAgent(
   if (!child) {
     throw new Error(`無法啟動 Agent: ${adapter.name}`);
   }
+
+  child.on('exit', (code) => {
+    try {
+      updateTask(taskId, {
+        status: code === 0 ? 'completed' : 'failed',
+        stoppedAt: Date.now(),
+      });
+    } catch {
+      // Ignore task-store failures in the detached child handler.
+    }
+
+    try {
+      notifyAgentFinished(adapter.name);
+    } catch {
+      // Notifications are best-effort.
+    }
+  });
 
   // 讓子進程獨立運行，不隨主進程退出
   child.unref();

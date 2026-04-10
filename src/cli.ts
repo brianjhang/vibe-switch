@@ -7,6 +7,8 @@ import { stopCommand } from './commands/stop.js';
 import { handoffCommand } from './commands/handoff.js';
 import { logCommand } from './commands/log.js';
 import { watchCommand } from './commands/watch.js';
+import { cleanCommand } from './commands/clean.js';
+import { agentsCommand } from './commands/agents.js';
 
 const program = new Command();
 
@@ -51,6 +53,18 @@ program
   .command('watch')
   .description('實時查看所有 Agent 的輸出')
   .action(watchCommand);
+
+// vibe clean
+program
+  .command('clean')
+  .description('清理已完成的任務和 worktree')
+  .action(cleanCommand);
+
+// vibe agents
+program
+  .command('agents')
+  .description('列出已安裝的 Agent')
+  .action(agentsCommand);
 
 // vibe handoff <branch> --to <agent>
 program

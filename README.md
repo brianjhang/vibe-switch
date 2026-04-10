@@ -1,94 +1,95 @@
 # 🔄 Vibe-Switch
 
-> **AI Agent 的 tmux** — 一行命令啟動多 Agent 並行工作，無縫交接上下文。
+> **AI Agent 的 tmux — 一行命令啟動多 Agent 並行工作，無縫交接上下文。**
 
-## 為什麼需要 Vibe-Switch？
+[繁體中文](./README.zh-TW.md) | English
 
-你是一人公司，同時用 Claude Code、Codex、Gemini CLI 做開發。
+## Why Vibe-Switch?
 
-| 問題 | 現狀 | Vibe-Switch |
-|------|------|-------------|
-| 啟動多個 Agent | 手動開多個終端窗口 | `vibe run "任務" --agent claude` |
-| 查看誰在做什麼 | 自己記住 | `vibe status` |
-| Agent A 做完交給 B | 手動複製上下文 | `vibe handoff <branch> --to codex` |
-| 停止所有 Agent | 逐個找 PID kill | `vibe stop --all` |
+Managing multiple AI agents manually is a cognitive nightmare. If you are a developer using Claude Code, Codex, and Gemini CLI simultaneously, you often face:
+- **Terminal Overload:** Dozens of open windows for different tasks.
+- **Context Loss:** Manually copying files and diffs between agents to "hand off" work.
+- **Process Chaos:** Forgetting which agent is working on which branch or how to stop them all.
 
-## 安裝
+**Vibe-Switch** provides a unified CLI to orchestrate multiple agents in isolated environments with seamless context handoff.
+
+## Install
 
 ```bash
-git clone https://github.com/your/vibe-switch.git
+git clone https://github.com/vibe-switch/vibe-switch.git
 cd vibe-switch
 npm install
 npm run build
 npm link
 ```
 
-## 使用方式
+## Quick Start
 
-### 啟動 Agent
-
+### 1. Run Multiple Agents
+Start different tasks with different agents in one line:
 ```bash
-# 讓 Claude 做後端 API
-vibe run "implement REST API with JWT auth" --agent claude
+# Backend task with Gemini
+vibe run "Implement JWT authentication middleware" --agent gemini
 
-# 讓 Codex 做前端
-vibe run "build login page with React" --agent codex
-
-# 讓 Gemini 寫測試
-vibe run "write integration tests" --agent gemini
+# Frontend task with Codex
+vibe run "Build a responsive login page with React" --agent codex
 ```
 
-### 查看狀態
-
+### 2. Check Status
+Get a bird's-eye view of all your active "vibes":
 ```bash
 vibe status
 ```
+| Agent | Task | Status | Branch | Modified |
+| :--- | :--- | :--- | :--- | :--- |
+| ◎ Codex | Build login page... | 🟢 running | vibe/codex-b2e4 | 3 |
+| ◆ Gemini | Implement JWT... | ✅ done | vibe/gemini-c3d5 | 2 |
 
-```
-┌───────────┬───────────────────────────┬──────────┬──────────────────┬────────┐
-│ Agent     │ 任務                      │ 狀態     │ 分支             │ 已修改 │
-├───────────┼───────────────────────────┼──────────┼──────────────────┼────────┤
-│ ✦ Claude  │ implement REST API...     │ 🟢 running│ vibe/claude-a1f3│ 5      │
-│ ◎ Codex   │ build login page...       │ 🟢 running│ vibe/codex-b2e4 │ 3      │
-│ ◆ Gemini  │ write integration tests   │ ✅ done   │ vibe/gemini-c3d5│ 2      │
-└───────────┴───────────────────────────┴──────────┴──────────────────┴────────┘
-```
-
-### 上下文交接
-
+### 3. Watch Activity
 ```bash
-# Claude 做完後，讓 Codex 接力
-vibe handoff vibe/claude-a1f3 --to codex
-
-# 帶額外說明
-vibe handoff vibe/claude-a1f3 --to codex -m "API schema 在 /api/schema.ts"
+vibe watch    # Interactive dashboard to monitor all active agents
 ```
 
-### 停止 Agent
-
+### 4. Inspect Logs
 ```bash
-vibe stop vibe/claude-a1f3    # 停止特定任務
-vibe stop --all                # 停止所有
+vibe log -f   # Tail the logs of a specific agent/task
 ```
 
-## 支持的 Agent
+### 5. Seamless Handoff
+Finished a backend API with Gemini? Hand the context directly to Codex to build the UI:
+```bash
+vibe handoff vibe/gemini-c3d5 --to codex -m "API is ready at /api/auth"
+```
 
-| Agent | 命令 | 狀態 |
-|-------|------|------|
-| Claude Code | `claude` | ✅ |
-| Codex CLI | `codex` | ✅ |
-| Gemini CLI | `gemini` | ✅ |
-| Antigravity | `gemini` | ✅ |
-| OpenClaw | `openclaw` | ✅ |
+### 6. Stop and Cleanup
+```bash
+vibe stop --all
+```
 
-## 和 Vibe-Kanban 的區別
+## ALL Commands
 
-| | Vibe-Kanban | Vibe-Switch |
-|---|---|---|
-| 介面 | Web UI (點點點) | CLI (打字) |
-| 啟動 Agent | 6 步操作 | 1 行命令 |
-| 目標用戶 | 團隊 | 一人公司 |
-| 核心能力 | 可視化管理 | 零摩擦 + 上下文交接 |
+- **`run`**: Spin up a new AI agent task in an isolated Git worktree.
+- **`status`**: Display a live table of all tasks, their status, and associated git branches.
+- **`watch`**: An interactive multi-pane log viewer for monitoring all running agents in real-time.
+- **`log`**: Access detailed execution logs for any specific task or agent.
+- **`stop`**: Gracefully terminate agent processes and clean up temporary worktrees.
+- **`handoff`**: Transfer the output, branch state, and context from one agent to another.
+
+## Supported Agents
+
+| Icon | Agent | Command | Status |
+| :---: | :--- | :--- | :--- |
+| ✦ | **Claude Code** | `claude` | ✅ |
+| ◎ | **Codex CLI** | `codex` | ✅ |
+| ◆ | **Gemini CLI** | `gemini` | ✅ |
+| 🚀 | **Antigravity** | `antigravity` | ✅ |
+| 🦀 | **OpenClaw** | `openclaw` | ✅ |
+
+## Architecture
+
+- **Git Worktree Isolation:** Each agent runs in a dedicated directory and branch, ensuring no file conflicts or dirty states.
+- **Adapter Pattern:** Modular design allows for easy integration of various AI agent CLIs by defining standard execution wrappers.
+- **JSON File Storage:** Task metadata, PIDs, and state are persisted in local JSON files to maintain context across sessions.
 
 ## License
 
