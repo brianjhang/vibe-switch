@@ -2,93 +2,115 @@
 
 > **AI Agent 的 tmux** — 一行命令啟動多 Agent 並行工作，無縫交接上下文。
 
+[English](./README.md) | 繁體中文
+
 ## 為什麼需要 Vibe-Switch？
 
-你是一人公司，同時用 Claude Code、Codex、Gemini CLI 做開發。
+同時用 Claude Code、Codex、Gemini CLI 開發時，你會遇到：
 
-| 問題 | 現狀 | Vibe-Switch |
-|------|------|-------------|
-| 啟動多個 Agent | 手動開多個終端窗口 | `vibe run "任務" --agent claude` |
-| 查看誰在做什麼 | 自己記住 | `vibe status` |
-| Agent A 做完交給 B | 手動複製上下文 | `vibe handoff <branch> --to codex` |
-| 停止所有 Agent | 逐個找 PID kill | `vibe stop --all` |
+- **終端爆炸**：每個 Agent 開一個窗口，切來切去。
+- **上下文丟失**：Agent A 做完的東西，要手動複製給 Agent B。
+- **進程混亂**：忘了哪個 Agent 在做什麼、PID 是多少。
+
+**Vibe-Switch** 提供統一的 CLI，在隔離環境中編排多個 Agent，無縫交接上下文。
 
 ## 安裝
 
 ```bash
-git clone https://github.com/your/vibe-switch.git
+npm install -g vibe-switch
+```
+
+或從源碼安裝：
+
+```bash
+git clone https://github.com/brianjhang/vibe-switch.git
 cd vibe-switch
 npm install
 npm run build
 npm link
 ```
 
-## 使用方式
+## 快速上手
 
-### 啟動 Agent
+### 1. 啟動多個 Agent
 
 ```bash
-# 讓 Claude 做後端 API
-vibe run "implement REST API with JWT auth" --agent claude
+# 後端任務交給 Gemini
+vibe run "實作 JWT 認證 middleware" --agent gemini
 
-# 讓 Codex 做前端
-vibe run "build login page with React" --agent codex
-
-# 讓 Gemini 寫測試
-vibe run "write integration tests" --agent gemini
+# 前端任務交給 Codex
+vibe run "用 React 做一個響應式登入頁面" --agent codex
 ```
 
-### 查看狀態
+### 2. 查看狀態
 
 ```bash
 vibe status
 ```
 
-```
-┌───────────┬───────────────────────────┬──────────┬──────────────────┬────────┐
-│ Agent     │ 任務                      │ 狀態     │ 分支             │ 已修改 │
-├───────────┼───────────────────────────┼──────────┼──────────────────┼────────┤
-│ ✦ Claude  │ implement REST API...     │ 🟢 running│ vibe/claude-a1f3│ 5      │
-│ ◎ Codex   │ build login page...       │ 🟢 running│ vibe/codex-b2e4 │ 3      │
-│ ◆ Gemini  │ write integration tests   │ ✅ done   │ vibe/gemini-c3d5│ 2      │
-└───────────┴───────────────────────────┴──────────┴──────────────────┴────────┘
-```
+| Agent | 任務 | 狀態 | 分支 | 已修改 |
+| :--- | :--- | :--- | :--- | :--- |
+| ◎ Codex | 做登入頁面... | 🟢 running | vibe/codex-b2e4 | 3 |
+| ◆ Gemini | 實作 JWT... | ✅ done | vibe/gemini-c3d5 | 2 |
 
-### 上下文交接
+### 3. 即時監控
 
 ```bash
-# Claude 做完後，讓 Codex 接力
-vibe handoff vibe/claude-a1f3 --to codex
-
-# 帶額外說明
-vibe handoff vibe/claude-a1f3 --to codex -m "API schema 在 /api/schema.ts"
+vibe watch    # 同時看到所有 Agent 的即時輸出，彩色標籤區分
 ```
 
-### 停止 Agent
+### 4. 查看日誌
 
 ```bash
-vibe stop vibe/claude-a1f3    # 停止特定任務
-vibe stop --all                # 停止所有
+vibe log vibe/codex-b2e4 -f    # 追蹤特定 Agent 的輸出
 ```
 
-## 支持的 Agent
+### 5. 上下文交接
 
-| Agent | 命令 | 狀態 |
-|-------|------|------|
-| Claude Code | `claude` | ✅ |
-| Codex CLI | `codex` | ✅ |
-| Gemini CLI | `gemini` | ✅ |
-| Antigravity | `gemini` | ✅ |
-| OpenClaw | `openclaw` | ✅ |
+Gemini 做完後端 API？直接把上下文交給 Codex 做前端：
 
-## 和 Vibe-Kanban 的區別
+```bash
+vibe handoff vibe/gemini-c3d5 --to codex -m "API 已經在 /api/auth 準備好了"
+```
 
-| | Vibe-Kanban | Vibe-Switch |
-|---|---|---|
-| 介面 | Web UI (點點點) | CLI (打字) |
-| 啟動 Agent | 6 步操作 | 1 行命令 |
-| 目標用戶 | 團隊 | 一人公司 |
-| 核心能力 | 可視化管理 | 零摩擦 + 上下文交接 |
+### 6. 停止與清理
+
+```bash
+vibe stop --all    # 停止所有 Agent
+vibe clean         # 清理已完成的任務和 worktree
+```
+
+## 完整命令列表
+
+| 命令 | 說明 |
+|------|------|
+| `vibe run` | 啟動 Agent 執行任務（自動建立 Git Worktree 隔離） |
+| `vibe status` | 表格總覽所有任務的狀態、分支、PID |
+| `vibe watch` | 即時多路串流，同時看所有 Agent 的輸出 |
+| `vibe log` | 查看/追蹤特定任務的日誌（支援 `-f` 即時追蹤） |
+| `vibe stop` | 停止單個或全部 Agent |
+| `vibe handoff` | 帶上下文交接給另一個 Agent |
+| `vibe summary` | 自動總結 Agent 的工作成果（日誌 + diff） |
+| `vibe clean` | 清理已完成的任務記錄、日誌和 worktree |
+| `vibe agents` | 列出已安裝的 Agent 及狀態 |
+| `vibe init` | 初始化項目的 vibe-switch 配置 |
+| `vibe config` | 查看或設定配置 |
+
+## 支援的 Agent
+
+| 圖示 | Agent | 命令 | 狀態 |
+| :---: | :--- | :--- | :--- |
+| ✦ | **Claude Code** | `claude` | ✅ |
+| ◎ | **Codex CLI** | `codex` | ✅ |
+| ◆ | **Gemini CLI** | `gemini` | ✅ |
+| 🚀 | **Antigravity** | `antigravity` | ✅ |
+| 🦀 | **OpenClaw** | `openclaw` | ✅ |
+
+## 架構
+
+- **Git Worktree 隔離**：每個 Agent 在獨立的目錄和分支中工作，零衝突。
+- **Adapter 模式**：新增 Agent 只需加一個適配器文件。
+- **JSON 存儲**：任務狀態存在本地 JSON 文件，輕量零依賴。
 
 ## License
 
