@@ -1,5 +1,5 @@
 /**
- * vibe watch — 實時查看所有 Agent 的輸出
+ * vibe watch - view real-time output from all Agents
  */
 
 import { type TaskRecord } from '../adapters/types.js';
@@ -61,7 +61,7 @@ export async function watchCommand(): Promise<void> {
   const tasks = getActiveTasks();
 
   if (tasks.length === 0) {
-    await output.info('目前沒有正在運行的 Agent。');
+    await output.info('No Agents are currently running.');
     return;
   }
 
@@ -73,11 +73,11 @@ export async function watchCommand(): Promise<void> {
       console.log(`${label} ${line}`);
     }, {
       onError(err) {
-        console.error(chalk.red(`讀取 ${task.branch} 日誌失敗: ${err instanceof Error ? err.message : String(err)}`));
+        console.error(chalk.red(`Failed to read log for ${task.branch}: ${err instanceof Error ? err.message : String(err)}`));
       },
     });
   });
 
-  await output.info(`正在實時查看 ${tasks.length} 個 Agent 的輸出。按 Ctrl+C 停止。`);
+  await output.info(`Watching real-time output from ${tasks.length} Agent(s). Press Ctrl+C to stop.`);
   await waitForStop(followers);
 }

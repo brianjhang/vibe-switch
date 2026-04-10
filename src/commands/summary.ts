@@ -1,5 +1,5 @@
 /**
- * vibe summary — 查看 Agent 的工作摘要
+ * vibe summary - view an Agent work summary
  */
 
 import { execSync } from 'child_process';
@@ -74,7 +74,7 @@ function getDiffStat(task: TaskRecord): string {
 export async function summaryCommand(branch: string): Promise<void> {
   const task = getTaskByBranch(branch);
   if (!task) {
-    await output.error(`找不到分支 ${branch} 對應的任務`);
+    await output.error(`Could not find a task for branch ${branch}`);
     process.exit(1);
     return;
   }

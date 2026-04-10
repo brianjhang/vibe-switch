@@ -1,5 +1,5 @@
 /**
- * vibe init — 初始化項目配置
+ * vibe init - initialize project config
  */
 
 import { configExists, DEFAULT_CONFIG, getConfigPath, writeConfig } from '../core/config.js';
@@ -9,10 +9,10 @@ export async function initCommand(): Promise<void> {
   const configPath = getConfigPath();
 
   if (configExists()) {
-    await output.warn(`配置文件已存在: ${configPath}`);
+    await output.warn(`Config file already exists: ${configPath}`);
     return;
   }
 
   writeConfig({ ...DEFAULT_CONFIG });
-  await output.success(`已建立配置文件: ${configPath}`);
+  await output.success(`Created config file: ${configPath}`);
 }

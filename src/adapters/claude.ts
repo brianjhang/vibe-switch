@@ -13,8 +13,8 @@ export const claudeAdapter: AgentAdapter = {
   },
 
   buildCommand(task: string, cwd: string): string {
-    // claude --print 模式適合非互動式任務
-    // 直接用 claude 互動模式讓用戶看到過程
+    // claude --print mode is suitable for non-interactive tasks.
+    // Use claude interactive mode directly so the user can see the process.
     const escapedTask = task.replace(/"/g, '\\"');
     return `claude --yes -p "${escapedTask}"`;
   },

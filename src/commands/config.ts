@@ -1,5 +1,5 @@
 /**
- * vibe config — 查看或設定配置
+ * vibe config - view or set config
  */
 
 import { DEFAULT_CONFIG, readConfig, writeConfig } from '../core/config.js';
@@ -23,7 +23,7 @@ function parseValue(key: string, value: string): unknown {
   if (typeof defaultValue === 'number') {
     const parsed = Number(value);
     if (!Number.isFinite(parsed)) {
-      throw new Error(`${key} 必須是數字`);
+      throw new Error(`${key} must be a number`);
     }
     return parsed;
   }
@@ -35,7 +35,7 @@ function parseValue(key: string, value: string): unknown {
     if (value === 'false') {
       return false;
     }
-    throw new Error(`${key} 必須是 true 或 false`);
+    throw new Error(`${key} must be true or false`);
   }
 
   if (typeof defaultValue === 'string') {
@@ -60,7 +60,7 @@ export async function configCommand(key?: string, value?: string): Promise<void>
 
     if (value === undefined) {
       if (!(key in config)) {
-        await output.warn(`找不到配置: ${key}`);
+        await output.warn(`Config not found: ${key}`);
         process.exit(1);
         return;
       }
@@ -71,9 +71,9 @@ export async function configCommand(key?: string, value?: string): Promise<void>
 
     config[key] = parseValue(key, value);
     writeConfig(config);
-    await output.success(`已更新配置: ${key} = ${formatValue(config[key])}`);
+    await output.success(`Updated config: ${key} = ${formatValue(config[key])}`);
   } catch (err) {
-    await output.error(`配置處理失敗: ${getErrorMessage(err)}`);
+    await output.error(`Config handling failed: ${getErrorMessage(err)}`);
     process.exit(1);
     return;
   }

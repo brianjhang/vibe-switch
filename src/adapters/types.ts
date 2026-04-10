@@ -1,30 +1,30 @@
 /**
- * Agent 適配器接口
- * 借鑑 CC-Switch 的 Provider Adapter 模式
+ * Agent adapter interface.
+ * Inspired by CC-Switch's Provider Adapter pattern.
  */
 
 export type AgentId = 'claude' | 'codex' | 'gemini' | 'antigravity' | 'openclaw';
 
 export interface AgentAdapter {
-  /** Agent 唯一標識 */
+  /** Unique Agent identifier. */
   id: AgentId;
-  /** 顯示名稱 */
+  /** Display name. */
   name: string;
-  /** 圖標 (emoji) */
+  /** Icon (emoji). */
   icon: string;
-  /** 檢測 Agent 是否已安裝 */
+  /** Check whether the Agent is installed. */
   detect(): Promise<boolean>;
-  /** 構建啟動命令 */
+  /** Build the startup command. */
   buildCommand(task: string, cwd: string): string;
-  /** 會話數據的本地路徑 */
+  /** Local path for session data. */
   resolveSessionPath(): string | null;
-  /** 提取最近會話的上下文 (Phase 4) */
+  /** Extract context from the most recent session (Phase 4). */
   extractContext?(sessionId?: string): Promise<ContextSnapshot | null>;
 }
 
 /**
- * 上下文快照
- * 借鑑 CC-Switch SessionMeta + 我們的差異化擴展
+ * Context snapshot.
+ * Inspired by CC-Switch SessionMeta plus our differentiating extensions.
  */
 export interface ContextSnapshot {
   sourceAgent: AgentId;
@@ -33,17 +33,17 @@ export interface ContextSnapshot {
   branch: string;
   timestamp: number;
 
-  // 工作成果摘要
+  // Work result summary.
   summary: string;
   modifiedFiles: string[];
   gitDiff: string;
 
-  // 待辦事項
+  // Pending items.
   pendingItems: string[];
 }
 
 /**
- * 任務記錄
+ * Task record.
  */
 export interface TaskRecord {
   id: string;

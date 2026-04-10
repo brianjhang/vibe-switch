@@ -9,8 +9,8 @@ export const antigravityAdapter: AgentAdapter = {
   icon: '🚀',
 
   async detect() {
-    // Antigravity 是 Gemini 的 Agent 模式，共用 gemini CLI
-    // 或者有獨立的 antigravity 命令
+    // Antigravity is Gemini's Agent mode and shares the gemini CLI.
+    // Or it may have a separate antigravity command.
     return commandExists('gemini');
   },
 

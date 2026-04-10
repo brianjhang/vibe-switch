@@ -1,5 +1,5 @@
 /**
- * Agent 進程管理
+ * Agent process management.
  */
 
 import { spawn, ChildProcess, execSync } from 'child_process';
@@ -31,8 +31,8 @@ function notifyAgentFinished(agentName: string): void {
 }
 
 /**
- * 啟動 Agent 進程
- * 在指定的工作目錄中運行 Agent 命令
+ * Start an Agent process.
+ * Run the Agent command in the specified working directory.
  */
 export function spawnAgent(
   adapter: AgentAdapter,
@@ -51,14 +51,14 @@ export function spawnAgent(
   ensureDir(getLogsDir());
   const logFd = openSync(getLogFilePath(taskId), 'a');
 
-  // 使用 shell 模式，讓各 Agent 的原生命令格式直接工作
+  // Use shell mode so each Agent's native command format works directly.
   let child: ChildProcess | undefined;
   try {
     child = spawn(command, {
       cwd,
       shell: true,
-      stdio: ['ignore', logFd, logFd], // 在背景運行，stdout/stderr 寫入任務日誌
-      detached: true,                  // 脫離父進程
+      stdio: ['ignore', logFd, logFd], // Run in the background and write stdout/stderr to the task log.
+      detached: true,                  // Detach from the parent process.
       env: { ...process.env, PATH: path },
     });
   } finally {
@@ -66,7 +66,7 @@ export function spawnAgent(
   }
 
   if (!child) {
-    throw new Error(`無法啟動 Agent: ${adapter.name}`);
+    throw new Error(`Unable to start Agent: ${adapter.name}`);
   }
 
   child.on('exit', (code) => {
@@ -86,23 +86,23 @@ export function spawnAgent(
     }
   });
 
-  // 讓子進程獨立運行，不隨主進程退出
+  // Let the child process run independently after the main process exits.
   child.unref();
 
   const pid = child.pid;
   if (!pid) {
-    throw new Error(`無法啟動 Agent: ${adapter.name}`);
+    throw new Error(`Unable to start Agent: ${adapter.name}`);
   }
 
   return { process: child, pid };
 }
 
 /**
- * 檢查進程是否還在運行
+ * Check whether a process is still running.
  */
 export function isProcessRunning(pid: number): boolean {
   try {
-    process.kill(pid, 0); // signal 0 只檢查不殺
+    process.kill(pid, 0); // Signal 0 only checks, without killing.
     return true;
   } catch {
     return false;
@@ -110,21 +110,21 @@ export function isProcessRunning(pid: number): boolean {
 }
 
 /**
- * 終止進程
+ * Terminate a process.
  */
 export function killProcess(pid: number): boolean {
   try {
-    // 先嘗試 SIGTERM 優雅退出
+    // Try SIGTERM first for a graceful exit.
     process.kill(pid, 'SIGTERM');
 
-    // 等 1 秒後如果還沒死就 SIGKILL
+    // After 1 second, use SIGKILL if it is still alive.
     setTimeout(() => {
       try {
         if (isProcessRunning(pid)) {
           process.kill(pid, 'SIGKILL');
         }
       } catch {
-        // 已經退出了
+        // It has already exited.
       }
     }, 1000);
 

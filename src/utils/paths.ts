@@ -4,7 +4,7 @@ import { homedir } from 'os';
 import { delimiter, join } from 'path';
 
 /**
- * CLI 常見安裝路徑（Homebrew / npm global）
+ * Common CLI install paths for Homebrew and npm global installs.
  */
 export function getExpandedPath(): string {
   const extraPaths = [
@@ -18,7 +18,7 @@ export function getExpandedPath(): string {
 }
 
 /**
- * 檢查命令是否存在
+ * Check whether a command exists.
  */
 export function commandExists(cmd: string): boolean {
   try {
@@ -33,7 +33,7 @@ export function commandExists(cmd: string): boolean {
 }
 
 /**
- * Vibe-Switch 數據目錄
+ * Vibe-Switch data directory.
  */
 export function getVibeDir(): string {
   const dir = join(homedir(), '.vibe-switch');
@@ -41,35 +41,35 @@ export function getVibeDir(): string {
 }
 
 /**
- * 任務存儲文件路徑
+ * Task storage file path.
  */
 export function getTasksFilePath(): string {
   return join(getVibeDir(), 'tasks.json');
 }
 
 /**
- * Agent 輸出日誌目錄
+ * Agent output log directory.
  */
 export function getLogsDir(): string {
   return join(getVibeDir(), 'logs');
 }
 
 /**
- * Agent 任務日誌文件路徑
+ * Agent task log file path.
  */
 export function getLogFilePath(taskId: string): string {
   return join(getLogsDir(), `${taskId}.log`);
 }
 
 /**
- * 上下文快照目錄
+ * Context snapshot directory.
  */
 export function getSnapshotsDir(): string {
   return join(getVibeDir(), 'snapshots');
 }
 
 /**
- * 確保目錄存在
+ * Ensure a directory exists.
  */
 export function ensureDir(dir: string): void {
   if (!existsSync(dir)) {

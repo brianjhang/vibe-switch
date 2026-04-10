@@ -1,5 +1,5 @@
 /**
- * vibe log — 查看 Agent 任務輸出
+ * vibe log - view Agent task output
  */
 
 import { existsSync, readFileSync } from 'fs';
@@ -37,7 +37,7 @@ function waitForStop(follower: LogFollower): Promise<void> {
 export async function logCommand(branch: string, options: LogOptions = {}): Promise<void> {
   const task = getTaskByBranch(branch);
   if (!task) {
-    await output.error(`找不到分支 ${branch} 對應的任務`);
+    await output.error(`Could not find a task for branch ${branch}`);
     process.exit(1);
     return;
   }
@@ -46,14 +46,14 @@ export async function logCommand(branch: string, options: LogOptions = {}): Prom
 
   if (options.follow) {
     if (!existsSync(logFilePath)) {
-      await output.warn('找不到日誌文件。等待 Agent 產生輸出...');
+      await output.warn('Log file not found. Waiting for Agent output...');
     }
 
     const follower = followLogFile(logFilePath, line => {
       console.log(line);
     });
 
-    await output.info('正在追蹤日誌輸出。按 Ctrl+C 停止。');
+    await output.info('Following log output. Press Ctrl+C to stop.');
     await waitForStop(follower);
     return;
   }
@@ -66,14 +66,14 @@ export async function logCommand(branch: string, options: LogOptions = {}): Prom
     }
 
     if (lines.length === 0) {
-      await output.info('目前沒有日誌輸出');
+      await output.info('No log output yet');
       return;
     }
 
     console.log(lines.slice(-20).join('\n'));
   } catch (err) {
     if (isMissingFileError(err)) {
-      await output.warn('找不到日誌文件。這可能是舊任務，或 Agent 尚未產生輸出。');
+      await output.warn('Log file not found. This may be an old task, or the Agent has not produced output yet.');
       return;
     }
     throw err;

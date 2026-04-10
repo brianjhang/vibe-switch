@@ -1,5 +1,5 @@
 /**
- * vibe handoff — 上下文交接（核心差異化命令）
+ * vibe handoff - context handoff, the core differentiating command
  */
 
 import { getAdapter } from '../adapters/index.js';
@@ -20,16 +20,16 @@ export async function handoffCommand(branch: string, options: HandoffOptions): P
   const targetAdapter = getAdapter(targetAgentId);
 
   if (!targetAdapter) {
-    await output.error(`未知的目標 Agent: ${targetAgentId}`);
+    await output.error(`Unknown target Agent: ${targetAgentId}`);
     process.exit(1);
     return;
   }
 
-  // 1. 查找源任務
+  // 1. Find the source task.
   const sourceTask = getTaskByBranch(branch);
   if (!sourceTask) {
-    await output.error(`找不到分支 ${branch} 對應的任務`);
-    await output.info('使用 vibe status 查看所有任務');
+    await output.error(`Could not find a task for branch ${branch}`);
+    await output.info('Use vibe status to view all tasks');
     process.exit(1);
     return;
   }
@@ -39,17 +39,17 @@ export async function handoffCommand(branch: string, options: HandoffOptions): P
   const targetName = targetAdapter.name;
   const sourceCwd = sourceTask.worktreePath || sourceTask.projectDir;
 
-  await output.info(`開始交接: ${sourceName} → ${targetName}`);
+  await output.info(`Starting handoff: ${sourceName} -> ${targetName}`);
 
-  // 2. 停止源 Agent（如果還在運行）
+  // 2. Stop the source Agent if it is still running.
   if (sourceTask.status === 'running') {
     killProcess(sourceTask.pid);
     updateTask(sourceTask.id, { status: 'stopped', stoppedAt: Date.now() });
-    await output.info(`已停止 ${sourceName} (PID: ${sourceTask.pid})`);
+    await output.info(`Stopped ${sourceName} (PID: ${sourceTask.pid})`);
   }
 
-  // 3. 生成上下文快照
-  await output.info('正在提取上下文...');
+  // 3. Generate a context snapshot.
+  await output.info('Extracting context...');
   const snapshot = await createSnapshot(
     sourceTask.agent,
     sourceTask.task,
@@ -57,43 +57,43 @@ export async function handoffCommand(branch: string, options: HandoffOptions): P
     sourceCwd,
   );
 
-  await output.info(`已修改文件: ${snapshot.modifiedFiles.length} 個`);
-  await output.info(`Git diff: ${snapshot.gitDiff.length} 字元`);
+  await output.info(`Modified files: ${snapshot.modifiedFiles.length}`);
+  await output.info(`Git diff: ${snapshot.gitDiff.length} characters`);
 
-  // 4. 格式化上下文為 prompt
+  // 4. Format the context as a prompt.
   const prompt = formatSnapshotAsPrompt(snapshot, targetAgentId, options.message);
 
-  // 5. 檢測目標 Agent
+  // 5. Check the target Agent.
   const installed = await targetAdapter.detect();
   if (!installed) {
-    await output.error(`${targetName} 未安裝`);
-    // 降級方案：輸出上下文讓用戶手動複製
-    await output.warn('降級方案：以下是上下文摘要，你可以手動複製給目標 Agent：');
+    await output.error(`${targetName} is not installed`);
+    // Fallback: print the context so the user can copy it manually.
+    await output.warn('Fallback: here is the context summary. You can copy it to the target Agent manually:');
     console.log('\n' + '─'.repeat(60));
     console.log(prompt);
     console.log('─'.repeat(60) + '\n');
     process.exit(1);
   }
 
-  // 6. 切換到源任務的分支（確保目標 Agent 在正確分支上工作）
+  // 6. Switch to the source task branch so the target Agent works on the correct branch.
   try {
     await checkoutBranch(sourceCwd, sourceTask.branch);
   } catch {
-    // 可能已經在正確分支上
+    // It may already be on the correct branch.
   }
 
-  // 7. 啟動目標 Agent，帶上上下文
-  await output.info(`啟動 ${targetName}，注入上下文...`);
+  // 7. Start the target Agent with the context.
+  await output.info(`Starting ${targetName} with injected context...`);
 
-  // 8. 啟動目標 Agent 並記錄新任務
+  // 8. Start the target Agent and record the new task.
   const newTaskId = `${targetAgentId}-${Date.now()}`;
   const { pid } = spawnAgent(targetAdapter, prompt, sourceCwd, newTaskId);
 
   addTask({
     id: newTaskId,
     agent: targetAgentId,
-    task: `[接力] ${sourceTask.task}`,
-    branch: sourceTask.branch,  // 在同一分支上繼續
+    task: `[handoff] ${sourceTask.task}`,
+    branch: sourceTask.branch,  // Continue on the same branch.
     pid,
     status: 'running',
     startedAt: Date.now(),
@@ -101,7 +101,7 @@ export async function handoffCommand(branch: string, options: HandoffOptions): P
     worktreePath: sourceTask.worktreePath,
   });
 
-  await output.success(`上下文交接完成！`);
-  await output.info(`${targetName} 已在 ${sourceTask.branch} 分支上繼續工作 (PID: ${pid})`);
-  await output.info('查看狀態: vibe status');
+  await output.success(`Context handoff complete!`);
+  await output.info(`${targetName} is continuing work on branch ${sourceTask.branch} (PID: ${pid})`);
+  await output.info('View status: vibe status');
 }

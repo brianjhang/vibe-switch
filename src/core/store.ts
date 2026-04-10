@@ -1,6 +1,6 @@
 /**
- * 任務狀態存儲
- * 使用 JSON 文件，KISS 原則
+ * Task state storage.
+ * Uses JSON files, following the KISS principle.
  */
 
 import { readFileSync, writeFileSync } from 'fs';
@@ -69,7 +69,7 @@ export function removeTask(id: string): void {
 }
 
 /**
- * 清理已失效的任務（進程已退出但狀態還是 running）
+ * Clean up stale tasks whose process has exited while status is still running.
  */
 export function cleanupStaleTasks(): void {
   const tasks = loadTasks();
@@ -78,10 +78,10 @@ export function cleanupStaleTasks(): void {
   for (const task of tasks) {
     if (task.status === 'running') {
       try {
-        // 檢查進程是否還活著
+        // Check whether the process is still alive.
         process.kill(task.pid, 0);
       } catch {
-        // 進程已不存在
+        // The process no longer exists.
         task.status = 'completed';
         task.stoppedAt = Date.now();
         changed = true;

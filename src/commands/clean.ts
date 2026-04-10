@@ -29,5 +29,5 @@ export async function cleanCommand(): Promise<void> {
     cleaned++;
   }
 
-  await output.success(`已清理 ${cleaned} 個任務`);
+  await output.success(`Cleaned up ${cleaned} task(s)`);
 }

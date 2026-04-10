@@ -1,5 +1,5 @@
 /**
- * vibe stop — 停止 Agent
+ * vibe stop - stop an Agent
  */
 
 import { getAllTasks, updateTask, getTaskByBranch } from '../core/store.js';
@@ -23,9 +23,9 @@ async function cleanupWorktree(task: TaskRecord): Promise<void> {
 
   try {
     await removeWorktree(task.worktreePath);
-    await output.info(`已移除 worktree: ${task.worktreePath}`);
+    await output.info(`Removed worktree: ${task.worktreePath}`);
   } catch (err) {
-    await output.warn(`Worktree 清理失敗 (${task.worktreePath}): ${getErrorMessage(err)}`);
+    await output.warn(`Worktree cleanup failed (${task.worktreePath}): ${getErrorMessage(err)}`);
   }
 }
 
@@ -36,29 +36,29 @@ export async function stopCommand(branch: string | undefined, options: StopOptio
   }
 
   if (!branch) {
-    await output.error('請指定分支名，或使用 --all 停止所有 Agent');
-    await output.info('用法: vibe stop <branch>  |  vibe stop --all');
+    await output.error('Please specify a branch name, or use --all to stop all Agents');
+    await output.info('Usage: vibe stop <branch>  |  vibe stop --all');
     process.exit(1);
     return;
   }
 
   const task = getTaskByBranch(branch!);
   if (!task) {
-    await output.error(`找不到分支 ${branch} 對應的任務`);
+    await output.error(`Could not find a task for branch ${branch}`);
     return;
   }
 
   if (task.status !== 'running') {
-    await output.warn(`任務已經是 ${task.status} 狀態`);
+    await output.warn(`Task is already in ${task.status} status`);
     return;
   }
 
   const killed = killProcess(task.pid);
   if (killed) {
     updateTask(task.id, { status: 'stopped', stoppedAt: Date.now() });
-    await output.success(`已停止 ${task.agent} (PID: ${task.pid}) — 分支: ${task.branch}`);
+    await output.success(`Stopped ${task.agent} (PID: ${task.pid}) - branch: ${task.branch}`);
   } else {
-    await output.warn(`進程 ${task.pid} 可能已經退出`);
+    await output.warn(`Process ${task.pid} may have already exited`);
     updateTask(task.id, { status: 'completed', stoppedAt: Date.now() });
   }
 
@@ -69,7 +69,7 @@ async function stopAll(): Promise<void> {
   const tasks = getAllTasks().filter(t => t.status === 'running');
 
   if (tasks.length === 0) {
-    await output.info('沒有正在運行的 Agent');
+    await output.info('No Agents are currently running');
     return;
   }
 
@@ -84,5 +84,5 @@ async function stopAll(): Promise<void> {
     stopped++;
   }
 
-  await output.success(`已停止 ${stopped} 個 Agent`);
+  await output.success(`Stopped ${stopped} Agent(s)`);
 }

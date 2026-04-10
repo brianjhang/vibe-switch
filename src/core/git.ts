@@ -1,6 +1,6 @@
 /**
- * Git 分支管理（簡化版）
- * 借鑑 Vibe-Kanban WorktreeManager，但大幅簡化
+ * Git branch management, simplified.
+ * Inspired by Vibe-Kanban WorktreeManager, but much simpler.
  */
 
 import { simpleGit, SimpleGit } from 'simple-git';
@@ -8,8 +8,8 @@ import { createHash } from 'crypto';
 import { basename, join, resolve } from 'path';
 
 /**
- * 生成 vibe 分支名
- * 格式：vibe/<agent>-<hash前6位>
+ * Generate a vibe branch name.
+ * Format: vibe/<agent>-<first 6 hash chars>
  */
 export function generateBranchName(agent: string, task: string): string {
   const hash = createHash('md5').update(task + Date.now()).digest('hex').slice(0, 6);
@@ -17,31 +17,31 @@ export function generateBranchName(agent: string, task: string): string {
 }
 
 /**
- * 創建新分支
+ * Create a new branch.
  */
 export async function createBranch(cwd: string, branchName: string): Promise<void> {
   const git: SimpleGit = simpleGit(cwd);
 
-  // 確保是 git repo
+  // Ensure this is a git repo.
   const isRepo = await git.checkIsRepo();
   if (!isRepo) {
-    throw new Error(`${cwd} 不是一個 Git 倉庫`);
+    throw new Error(`${cwd} is not a Git repository`);
   }
 
-  // 從當前 HEAD 創建分支，但不切換工作區
+  // Create the branch from the current HEAD without switching the worktree.
   await git.raw(['branch', branchName]);
 }
 
 /**
- * 創建隔離的 Git worktree，讓多個 Agent 可以並行工作
+ * Create an isolated Git worktree so multiple Agents can work in parallel.
  */
 export async function createWorktree(projectDir: string, branchName: string): Promise<string> {
   const git: SimpleGit = simpleGit(projectDir);
 
-  // 確保是 git repo
+  // Ensure this is a git repo.
   const isRepo = await git.checkIsRepo();
   if (!isRepo) {
-    throw new Error(`${projectDir} 不是一個 Git 倉庫`);
+    throw new Error(`${projectDir} is not a Git repository`);
   }
 
   const repoName = basename(projectDir);
@@ -52,7 +52,7 @@ export async function createWorktree(projectDir: string, branchName: string): Pr
 }
 
 /**
- * 移除指定的 Git worktree
+ * Remove the specified Git worktree.
  */
 export async function removeWorktree(worktreePath: string): Promise<void> {
   const git: SimpleGit = simpleGit(worktreePath);
@@ -60,7 +60,7 @@ export async function removeWorktree(worktreePath: string): Promise<void> {
 }
 
 /**
- * 獲取分支的修改文件列表
+ * Get the list of modified files for a branch.
  */
 export async function getModifiedFiles(cwd: string): Promise<string[]> {
   const git: SimpleGit = simpleGit(cwd);
@@ -73,7 +73,7 @@ export async function getModifiedFiles(cwd: string): Promise<string[]> {
 }
 
 /**
- * 獲取 diff 統計
+ * Get diff stats.
  */
 export async function getDiffSummary(cwd: string, baseBranch?: string): Promise<string> {
   const git: SimpleGit = simpleGit(cwd);
@@ -83,7 +83,7 @@ export async function getDiffSummary(cwd: string, baseBranch?: string): Promise<
       const diff = await git.diff([baseBranch, '--stat']);
       return diff;
     }
-    // 獲取工作區的改動
+    // Get working tree changes.
     const diff = await git.diff(['--stat']);
     return diff || '(no changes)';
   } catch {
@@ -92,17 +92,17 @@ export async function getDiffSummary(cwd: string, baseBranch?: string): Promise<
 }
 
 /**
- * 獲取完整 diff（用於 handoff 上下文）
+ * Get the full diff for handoff context.
  */
 export async function getFullDiff(cwd: string): Promise<string> {
   const git: SimpleGit = simpleGit(cwd);
   try {
-    // 先嘗試 staged + unstaged
+    // Try staged plus unstaged changes first.
     let diff = await git.diff();
     const stagedDiff = await git.diff(['--cached']);
     const fullDiff = [diff, stagedDiff].filter(Boolean).join('\n');
 
-    // 如果沒有 working 改動，檢查最近的 commits
+    // If there are no working changes, check recent commits.
     if (!fullDiff.trim()) {
       const log = await git.log({ maxCount: 3 });
       if (log.latest) {
@@ -111,7 +111,7 @@ export async function getFullDiff(cwd: string): Promise<string> {
       }
     }
 
-    // 截斷避免太長
+    // Truncate to avoid excessive length.
     if (fullDiff.length > 5000) {
       return fullDiff.slice(0, 5000) + '\n\n... (truncated, total ' + fullDiff.length + ' chars)';
     }
@@ -122,7 +122,7 @@ export async function getFullDiff(cwd: string): Promise<string> {
 }
 
 /**
- * 獲取當前分支名
+ * Get the current branch name.
  */
 export async function getCurrentBranch(cwd: string): Promise<string> {
   const git: SimpleGit = simpleGit(cwd);
@@ -131,7 +131,7 @@ export async function getCurrentBranch(cwd: string): Promise<string> {
 }
 
 /**
- * 切換到指定分支
+ * Check out the specified branch.
  */
 export async function checkoutBranch(cwd: string, branch: string): Promise<void> {
   const git: SimpleGit = simpleGit(cwd);

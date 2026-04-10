@@ -1,8 +1,8 @@
 /**
- * 終端輸出格式化工具
+ * Terminal output formatting utilities.
  */
 
-// 使用動態 import 處理 ESM 的 chalk
+// Use a dynamic import to handle ESM chalk.
 let chalkInstance: any = null;
 
 async function getChalk() {

@@ -1,5 +1,5 @@
 /**
- * 日誌文件增量讀取
+ * Incremental log file reading.
  */
 
 import { createReadStream, statSync } from 'fs';

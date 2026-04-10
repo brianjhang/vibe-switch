@@ -1,5 +1,5 @@
 /**
- * 上下文提取和注入（核心差異化模組）
+ * Context extraction and injection, the core differentiating module.
  */
 
 import { ContextSnapshot, AgentId } from '../adapters/types.js';
@@ -9,7 +9,7 @@ import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 /**
- * 從當前工作狀態生成上下文快照
+ * Generate a context snapshot from the current work state.
  */
 export async function createSnapshot(
   sourceAgent: AgentId,
@@ -27,19 +27,19 @@ export async function createSnapshot(
     projectDir: cwd,
     branch,
     timestamp: Date.now(),
-    summary: summary || `Agent ${sourceAgent} 正在處理: ${task}`,
+    summary: summary || `Agent ${sourceAgent} is working on: ${task}`,
     modifiedFiles,
     gitDiff,
     pendingItems: [],
   };
 
-  // 持久化快照
+  // Persist the snapshot.
   saveSnapshot(branch, snapshot);
   return snapshot;
 }
 
 /**
- * 保存快照到文件
+ * Save a snapshot to a file.
  */
 function saveSnapshot(branch: string, snapshot: ContextSnapshot): void {
   const dir = getSnapshotsDir();
@@ -49,7 +49,7 @@ function saveSnapshot(branch: string, snapshot: ContextSnapshot): void {
 }
 
 /**
- * 加載快照
+ * Load a snapshot.
  */
 export function loadSnapshot(branch: string): ContextSnapshot | null {
   try {
@@ -63,7 +63,7 @@ export function loadSnapshot(branch: string): ContextSnapshot | null {
 }
 
 /**
- * 將上下文快照格式化為 prompt（注入目標 Agent）
+ * Format a context snapshot as a prompt for injection into the target Agent.
  */
 export function formatSnapshotAsPrompt(
   snapshot: ContextSnapshot,
@@ -71,32 +71,32 @@ export function formatSnapshotAsPrompt(
   extraMessage?: string,
 ): string {
   const lines: string[] = [
-    `=== 上下文交接 ===`,
-    `前一個 Agent (${snapshot.sourceAgent}) 的工作交接給你 (${targetAgent})。`,
+    `=== Context Handoff ===`,
+    `The previous Agent (${snapshot.sourceAgent}) is handing off its work to you (${targetAgent}).`,
     ``,
-    `## 原始任務`,
+    `## Original Task`,
     snapshot.taskDescription,
     ``,
-    `## 工作摘要`,
+    `## Work Summary`,
     snapshot.summary,
     ``,
   ];
 
   if (snapshot.modifiedFiles.length > 0) {
-    lines.push(`## 已修改的文件`);
+    lines.push(`## Modified Files`);
     snapshot.modifiedFiles.forEach(f => lines.push(`- ${f}`));
     lines.push('');
   }
 
   if (snapshot.pendingItems.length > 0) {
-    lines.push(`## 待完成事項`);
+    lines.push(`## Pending Items`);
     snapshot.pendingItems.forEach(item => lines.push(`- ${item}`));
     lines.push('');
   }
 
   if (snapshot.gitDiff && snapshot.gitDiff !== '(no changes)') {
-    lines.push(`## 代碼改動 (diff)`);
-    // 截斷 diff 避免 prompt 過長
+    lines.push(`## Code Changes (diff)`);
+    // Truncate the diff to avoid an overly long prompt.
     const truncatedDiff = snapshot.gitDiff.length > 3000
       ? snapshot.gitDiff.slice(0, 3000) + '\n... (truncated)'
       : snapshot.gitDiff;
@@ -107,12 +107,12 @@ export function formatSnapshotAsPrompt(
   }
 
   if (extraMessage) {
-    lines.push(`## 額外說明`);
+    lines.push(`## Additional Notes`);
     lines.push(extraMessage);
     lines.push('');
   }
 
-  lines.push(`請在此基礎上繼續工作。先理解之前的進展，然後繼續推進。`);
+  lines.push(`Continue working from this context. First understand the previous progress, then move the task forward.`);
 
   return lines.join('\n');
 }

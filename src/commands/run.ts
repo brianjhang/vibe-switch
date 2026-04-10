@@ -1,5 +1,5 @@
 /**
- * vibe run — 一行啟動 Agent
+ * vibe run - start an Agent with one command
  */
 
 import { getAdapter } from '../adapters/index.js';
@@ -20,7 +20,7 @@ function getErrorMessage(err: unknown): string {
 
 function isNotGitRepositoryError(err: unknown): boolean {
   const message = getErrorMessage(err).toLowerCase();
-  return message.includes('not a git repository') || message.includes('不是一個 git 倉庫');
+  return message.includes('not a git repository');
 }
 
 export async function runCommand(task: string, options: RunOptions): Promise<void> {
@@ -28,22 +28,22 @@ export async function runCommand(task: string, options: RunOptions): Promise<voi
   const adapter = getAdapter(agentId);
 
   if (!adapter) {
-    await output.error(`未知的 Agent: ${agentId}。可用: claude, codex, gemini, antigravity, openclaw`);
+    await output.error(`Unknown Agent: ${agentId}. Available: claude, codex, gemini, antigravity, openclaw`);
     process.exit(1);
     return;
   }
 
-  // 1. 檢測 Agent 是否安裝
+  // 1. Check whether the Agent is installed.
   const installed = await adapter.detect();
   if (!installed) {
-    await output.error(`${adapter.name} 未安裝或不在 PATH 中`);
+    await output.error(`${adapter.name} is not installed or is not in PATH`);
     process.exit(1);
     return;
   }
 
   const cwd = process.cwd();
 
-  // 2. 創建 Git 分支
+  // 2. Create a Git branch.
   const branchName = options.branch || generateBranchName(agentId, task);
   let worktreePath: string | undefined;
 
@@ -59,17 +59,17 @@ export async function runCommand(task: string, options: RunOptions): Promise<voi
       throw err;
     }
 
-    await output.info(`已創建分支: ${branchName}`);
+    await output.info(`Created branch: ${branchName}`);
 
-    // 3. 創建隔離 worktree
+    // 3. Create an isolated worktree.
     worktreePath = await createWorktree(cwd, branchName);
-    await output.info(`已創建 worktree: ${worktreePath}`);
+    await output.info(`Created worktree: ${worktreePath}`);
 
-    // 4. 啟動 Agent 進程
+    // 4. Start the Agent process.
     const label = await output.agentLabel(adapter.icon, adapter.name);
-    await output.info(`啟動 ${label} ...`);
+    await output.info(`Starting ${label} ...`);
 
-    // 5. 啟動 Agent 進程並記錄任務
+    // 5. Start the Agent process and record the task.
     const taskId = `${agentId}-${Date.now()}`;
     const { pid } = spawnAgent(adapter, task, worktreePath, taskId);
 
@@ -85,22 +85,22 @@ export async function runCommand(task: string, options: RunOptions): Promise<voi
       worktreePath,
     });
 
-    await output.success(`${adapter.name} 已在背景啟動 (PID: ${pid})`);
-    await output.info(`任務: ${task}`);
-    await output.info(`分支: ${branchName}`);
+    await output.success(`${adapter.name} started in the background (PID: ${pid})`);
+    await output.info(`Task: ${task}`);
+    await output.info(`Branch: ${branchName}`);
     await output.info(`Worktree: ${worktreePath}`);
-    await output.info(`查看狀態: vibe status`);
+    await output.info(`View status: vibe status`);
 
   } catch (err) {
     if (worktreePath) {
       try {
         await removeWorktree(worktreePath);
       } catch {
-        // 啟動失敗時盡力清理已創建的 worktree
+        // Best-effort cleanup for the worktree created before startup failed.
       }
     }
 
-    await output.error(`啟動失敗: ${getErrorMessage(err)}`);
+    await output.error(`Startup failed: ${getErrorMessage(err)}`);
     process.exit(1);
     return;
   }
