@@ -19,7 +19,7 @@ const program = new Command();
 program
   .name('vibe')
   .description('tmux for AI Agents - start multiple Agents in parallel with one command')
-  .version('1.2.0');
+  .version('1.2.1');
 
 // vibe run "task description" --agent claude
 program

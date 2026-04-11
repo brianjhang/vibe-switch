@@ -8,7 +8,7 @@
 >
 > 🤖 **AI Agents**: If you are an AI coding assistant, see [docs/ai-skill.md](./docs/ai-skill.md) for the machine-readable command reference and orchestration guide.
 
-[繁體中文](./README.zh-TW.md) | English
+[繁體中文](./README.zh-TW.md) | [简体中文](./README.zh-CN.md) | [日本語](./README.ja.md) | English
 
 ## Why Vibe-Switch?
 

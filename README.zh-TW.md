@@ -8,7 +8,7 @@
 >
 > 🤖 **AI Agent 使用指南**：如果你是 AI 編程助手，請參閱 [docs/ai-skill.md](./docs/ai-skill.md) 獲取機器可讀的指令參考和編排指南。
 
-[English](./README.md) | 繁體中文
+[English](./README.md) | 繁體中文 | [简体中文](./README.zh-CN.md) | [日本語](./README.ja.md)
 
 ## 為什麼需要 Vibe-Switch？
 
