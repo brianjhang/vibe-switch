@@ -13,6 +13,29 @@ tags:
   - codex
   - gemini
   - claude
+requires:
+  binaries:
+    - node (>= 18)
+    - npm
+    - git
+  optional_binaries:
+    - claude (Claude Code CLI)
+    - codex (Codex CLI)
+    - gemini (Gemini CLI)
+config_paths:
+  - ~/.vibe-switch/tasks.json
+  - ~/.vibe-switch/logs/
+  - ~/.vibe-switch/snapshots/
+  - .vibeswitch.json (project-level, optional)
+credentials: none
+network_access: false
+permissions:
+  - filesystem: read/write to ~/.vibe-switch/ and Git worktrees
+  - process: spawns agent CLI subprocesses
+  - network: none (all operations are local)
+source: https://github.com/brianjhang/vibe-switch
+npm: https://www.npmjs.com/package/vibe-switch
+license: MIT
 ---
 
 # Vibe-Switch — tmux for AI Agents
