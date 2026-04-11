@@ -1,7 +1,7 @@
 ---
 name: Vibe-Switch
 description: "tmux for AI Agents — Orchestrate multiple AI coding agents in parallel with one command. Run Claude Code, Codex CLI, and Gemini CLI simultaneously on isolated Git branches with seamless context handoff."
-version: 1.1.0
+version: 1.0.2
 tags:
   - ai
   - agent
@@ -13,26 +13,41 @@ tags:
   - codex
   - gemini
   - claude
+install:
+  method: npm
+  command: "npm install -g vibe-switch"
+  registry: https://www.npmjs.com/package/vibe-switch
+  note: "Installation requires network access to pull the package from npm. After installation, vibe-switch itself runs entirely locally."
 requires:
   binaries:
     - node (>= 18)
     - npm
     - git
   optional_binaries:
-    - claude (Claude Code CLI)
-    - codex (Codex CLI)
-    - gemini (Gemini CLI)
+    - claude (Claude Code CLI — requires ANTHROPIC_API_KEY)
+    - codex (Codex CLI — requires OPENAI_API_KEY)
+    - gemini (Gemini CLI — requires Google Cloud auth)
+  env:
+    - ANTHROPIC_API_KEY (only if using Claude agent — managed by Claude CLI, not by vibe-switch)
+    - OPENAI_API_KEY (only if using Codex agent — managed by Codex CLI, not by vibe-switch)
+    - GOOGLE_APPLICATION_CREDENTIALS (only if using Gemini agent — managed by Gemini CLI, not by vibe-switch)
 config_paths:
-  - ~/.vibe-switch/tasks.json
-  - ~/.vibe-switch/logs/
-  - ~/.vibe-switch/snapshots/
-  - .vibeswitch.json (project-level, optional)
-credentials: none
-network_access: false
+  - ~/.vibe-switch/tasks.json (task state store)
+  - ~/.vibe-switch/logs/ (agent output logs)
+  - ~/.vibe-switch/snapshots/ (handoff context snapshots)
+  - .vibeswitch.json (project-level config, optional)
+credentials:
+  vibe-switch: none — vibe-switch itself does not read, store, or transmit any API keys or secrets
+  agent_clis: each spawned agent CLI manages its own authentication independently; vibe-switch passes only the task prompt as an argument
+network_access:
+  install: true — npm install requires network
+  runtime: false — vibe-switch itself makes no network requests at runtime
+  spawned_agents: varies — Claude and Gemini CLIs may access the network; Codex CLI runs in a sandbox with no network access
 permissions:
-  - filesystem: read/write to ~/.vibe-switch/ and Git worktrees
-  - process: spawns agent CLI subprocesses
-  - network: none (all operations are local)
+  - filesystem: read/write to ~/.vibe-switch/ for task state, logs, and snapshots
+  - filesystem: create/remove Git worktrees in sibling directories of the repository
+  - process: spawns agent CLI subprocesses (claude, codex, gemini) and manages their PIDs
+  - network: vibe-switch makes zero network requests at runtime; network behavior of spawned agents is controlled by each agent's own configuration
 source: https://github.com/brianjhang/vibe-switch
 npm: https://www.npmjs.com/package/vibe-switch
 license: MIT
