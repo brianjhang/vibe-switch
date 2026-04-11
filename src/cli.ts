@@ -19,14 +19,14 @@ const program = new Command();
 program
   .name('vibe')
   .description('tmux for AI Agents - start multiple Agents in parallel with one command')
-  .version('1.1.0');
+  .version('1.2.0');
 
 // vibe run "task description" --agent claude
 program
   .command('run')
   .description('Start an Agent to run a task')
   .argument('<task>', 'Task description')
-  .option('-a, --agent <agent>', 'AI Agent name (claude/codex/gemini/antigravity/openclaw)', 'claude')
+  .option('-a, --agent <agent>', 'AI Agent name (claude/codex/gemini)', 'claude')
   .option('-b, --branch <branch>', 'Custom Git branch name')
   .action(runCommand);
 

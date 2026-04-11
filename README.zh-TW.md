@@ -104,13 +104,15 @@ vibe clean         # 清理已完成的任務和 worktree
 
 ## 支援的 Agent
 
-| 圖示 | Agent | 命令 | 狀態 |
+Vibe-Switch 編排的是**終端原生的 AI Coding CLI 工具**——能接受任務並在背景自主執行的 headless 程式。GUI 編輯器（Cursor、Windsurf 等）無法被調度，但你可以在它們的內建終端裡使用 `vibe` 指令。
+
+| 圖示 | Agent | CLI 指令 | Headless 參數 |
 | :---: | :--- | :--- | :--- |
-| ✦ | **Claude Code** | `claude` | ✅ |
-| ◎ | **Codex CLI** | `codex` | ✅ |
-| ◆ | **Gemini CLI** | `gemini` | ✅ |
-| 🚀 | **Antigravity** | `antigravity` | ✅ |
-| 🦀 | **OpenClaw** | `openclaw` | ✅ |
+| ✦ | **Claude Code** | `claude` | `-p "task"` |
+| ◎ | **Codex CLI** | `codex` | `exec --full-auto "task"` |
+| ◆ | **Gemini CLI** | `gemini` | `-p "task"` |
+
+> 💡 **擴充更多 Agent**：模組化的 Adapter 模式讓新增 CLI agent 非常容易。參見 `src/adapters/` 目錄。
 
 ## 架構
 

@@ -31,12 +31,10 @@ Supported agent IDs:
 - `claude`
 - `codex`
 - `gemini`
-- `antigravity`
-- `openclaw`
 
 ## Command Reference
 
-There are 11 commands: `run`, `status`, `stop`, `log`, `watch`, `clean`, `agents`, `summary`, `init`, `config`, and `handoff`.
+There are 12 commands: `run`, `status`, `stop`, `log`, `watch`, `clean`, `agents`, `summary`, `init`, `config`, `handoff`, and `doctor`.
 
 ### `vibe run`
 
@@ -62,7 +60,7 @@ Notes:
 - Must be run from a Git repository.
 - The branch is generated as `vibe/<agent>-<hash>` unless `--branch` is provided.
 - The agent runs in a sibling worktree directory, not in the original checkout.
-- Valid agent IDs are `claude`, `codex`, `gemini`, `antigravity`, and `openclaw`.
+- Valid agent IDs are `claude`, `codex`, and `gemini`.
 - The current CLI default agent is `claude`; pass `--agent` for deterministic behavior.
 
 ### `vibe status`
@@ -392,8 +390,7 @@ Practical selection guidance:
 - Use `codex` for repository edits, implementation, refactors, and test-driven code changes.
 - Use `claude` for broad reasoning, architecture tradeoffs, code review, and tasks that benefit from careful written analysis.
 - Use `gemini` for broad exploration, alternate implementations, test generation, documentation passes, and cross-checking another agent's work.
-- Use `antigravity` when you want the Gemini-backed adapter path used by this project. It currently detects the `gemini` CLI and runs through `gemini -p`.
-- Use `openclaw` when the `openclaw` CLI is installed and you want to route a scoped task to that adapter.
+
 
 Good delegation habits:
 
@@ -413,8 +410,7 @@ Use this table before dispatching tasks. Choosing the wrong agent for a task was
 | **claude**   | ✅          | ✅          | No      | Architecture, code review, broad reasoning |
 | **codex**    | ✅          | ❌          | Yes     | Implementation, refactors, test-driven changes |
 | **gemini**   | ✅          | ✅          | No      | Exploration, cross-checking, documentation |
-| **antigravity** | ✅       | ✅          | No      | Full-stack orchestration, deployment |
-| **openclaw** | ✅          | ❌          | Yes     | Scoped tasks via OpenClaw adapter |
+
 
 Key constraints:
 

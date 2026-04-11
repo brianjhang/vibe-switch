@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-04-11
+
+### Changed
+- **Supported Agents cleanup**: Removed misleading `antigravity` and `openclaw` adapters. Vibe-Switch now ships with 3 verified, headless-capable CLI agents: Claude Code, Codex CLI, and Gemini CLI.
+- **README clarity**: "Supported Agents" section now clearly explains that vibe-switch orchestrates terminal-native CLI tools (not GUI editors like Cursor or Windsurf), and shows the exact headless flags for each agent.
+- **docs/ai-skill.md**: Updated agent IDs, capability matrix, and selection tips to reflect the 3 supported agents.
+
+### Removed
+- `antigravity` adapter (was a misleading alias for `gemini -p`).
+- `openclaw` adapter (niche tool, not verified).
+
 ## [1.1.0] - 2026-04-11
 
 ### Added

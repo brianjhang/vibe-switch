@@ -108,13 +108,15 @@ vibe clean         # Clean up finished tasks and worktrees
 
 ## Supported Agents
 
-| Icon | Agent | Command | Status |
+Vibe-Switch orchestrates **terminal-native AI coding CLIs** — tools that can accept a task and execute autonomously in a headless process. GUI-based editors (Cursor, Windsurf, etc.) cannot be dispatched, but you can run `vibe` from their integrated terminals.
+
+| Icon | Agent | CLI Command | Headless Flag |
 | :---: | :--- | :--- | :--- |
-| ✦ | **Claude Code** | `claude` | ✅ |
-| ◎ | **Codex CLI** | `codex` | ✅ |
-| ◆ | **Gemini CLI** | `gemini` | ✅ |
-| 🚀 | **Antigravity** | `antigravity` | ✅ |
-| 🦀 | **OpenClaw** | `openclaw` | ✅ |
+| ✦ | **Claude Code** | `claude` | `-p "task"` |
+| ◎ | **Codex CLI** | `codex` | `exec --full-auto "task"` |
+| ◆ | **Gemini CLI** | `gemini` | `-p "task"` |
+
+> 💡 **Adding more agents:** The modular adapter pattern makes it easy to integrate new CLI agents. See `src/adapters/` for examples.
 
 ## Architecture
 

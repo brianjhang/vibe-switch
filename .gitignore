@@ -3,3 +3,4 @@ dist/
 .vibe-switch/
 .vibeswitch.json
 HANDOFF.md
+.aider*

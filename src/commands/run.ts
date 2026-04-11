@@ -28,7 +28,7 @@ export async function runCommand(task: string, options: RunOptions): Promise<voi
   const adapter = getAdapter(agentId);
 
   if (!adapter) {
-    await output.error(`Unknown Agent: ${agentId}. Available: claude, codex, gemini, antigravity, openclaw`);
+    await output.error(`Unknown Agent: ${agentId}. Available: claude, codex, gemini`);
     process.exit(1);
     return;
   }
