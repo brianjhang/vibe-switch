@@ -12,13 +12,14 @@ import { agentsCommand } from './commands/agents.js';
 import { summaryCommand } from './commands/summary.js';
 import { initCommand } from './commands/init.js';
 import { configCommand } from './commands/config.js';
+import { doctorCommand } from './commands/doctor.js';
 
 const program = new Command();
 
 program
   .name('vibe')
   .description('tmux for AI Agents - start multiple Agents in parallel with one command')
-  .version('1.0.0');
+  .version('1.1.0');
 
 // vibe run "task description" --agent claude
 program
@@ -98,5 +99,11 @@ program
   .requiredOption('--to <agent>', 'Target Agent')
   .option('-m, --message <message>', 'Additional handoff notes')
   .action(handoffCommand);
+
+// vibe doctor
+program
+  .command('doctor')
+  .description('Diagnose environment, agents, and config')
+  .action(doctorCommand);
 
 program.parse();

@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-04-11
+
+### Added
+- **vibe doctor command**: Environment diagnostics showing version, binary path, Node.js info, installed agents, config status, and task counts. Designed for both AI agents and human users debugging environment issues.
+- **Agent Capability Matrix**: Added to `docs/ai-skill.md` — documents network/SSH capabilities and sandbox constraints for each agent, preventing incorrect task assignments (e.g., SSH tasks to sandboxed Codex).
+- **"Before dispatching tasks" guide**: Three golden rules in `docs/ai-skill.md` — commit before dispatch, check agent capabilities, right-size the task.
+
+### Changed
+- **README AI entry point**: Both README.md and README.zh-TW.md now include a prominent `🤖 AI Agents` callout linking to `docs/ai-skill.md`, so AI assistants discover the machine-readable guide immediately.
+- **README positioning**: Updated "Why Vibe-Switch?" to acknowledge AI orchestrators as first-class users alongside human developers.
+
 ## [0.5.0] - 2026-04-11
 
 ### Added

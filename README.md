@@ -5,12 +5,14 @@
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](https://nodejs.org)
 
 > **tmux for AI Agents** — Orchestrate multiple AI coding agents in parallel with one command.
+>
+> 🤖 **AI Agents**: If you are an AI coding assistant, see [docs/ai-skill.md](./docs/ai-skill.md) for the machine-readable command reference and orchestration guide.
 
 [繁體中文](./README.zh-TW.md) | English
 
 ## Why Vibe-Switch?
 
-Managing multiple AI agents manually is a cognitive nightmare. If you are a developer using Claude Code, Codex, and Gemini CLI simultaneously, you often face:
+Whether you are running commands yourself or letting an AI orchestrator dispatch agents on your behalf, managing multiple AI agents is a cognitive nightmare. If you are a developer using Claude Code, Codex, and Gemini CLI simultaneously, you often face:
 
 - **Terminal Overload:** Dozens of open windows for different tasks.
 - **Context Loss:** Manually copying files and diffs between agents to "hand off" work.

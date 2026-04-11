@@ -201,6 +201,28 @@ Notes:
 - Checks `PATH`, plus common Homebrew and npm global locations.
 - Use this before starting work if you do not know which agent CLIs are installed.
 
+### `vibe doctor`
+
+Diagnose the vibe-switch environment: version, binary path, Node.js info, installed agents, config status, and task counts.
+
+Syntax:
+
+```bash
+vibe doctor
+```
+
+Example:
+
+```bash
+vibe doctor
+```
+
+Notes:
+
+- Outputs the vibe binary path — useful when `run_command` environments have limited PATH.
+- Shows a summary of all task counts by status.
+- Use this as the first command when entering a new environment to verify everything is working.
+
 ### `vibe summary`
 
 Show a compact summary for a task branch.
@@ -302,6 +324,12 @@ Notes:
 
 ## Common Workflow Patterns
 
+### Before dispatching tasks
+
+1. **Commit your changes first.** Worktrees are created from the current branch HEAD. Uncommitted modifications in your working directory will NOT be visible to spawned agents.
+2. **Check agent capabilities.** Not all agents can access the network or SSH. See the Agent Capability Matrix in the Agent Selection Tips section.
+3. **Right-size the task.** If a task touches a single file and takes less than 5 minutes, do it yourself instead of dispatching — the overhead is not worth it.
+
 ### Check the environment first
 
 ```bash
@@ -375,3 +403,20 @@ Good delegation habits:
 - Use `vibe log <branch>` before interrupting or handing off a task.
 - Use `vibe handoff` for continuation on the same branch; use a fresh `vibe run` for independent work.
 - Avoid `vibe stop --all` unless the user explicitly wants all running agents stopped.
+
+### Agent Capability Matrix
+
+Use this table before dispatching tasks. Choosing the wrong agent for a task wastes time.
+
+| Agent        | Local Files | Network/SSH | Sandbox | Best For |
+|:-------------|:-----------:|:-----------:|:-------:|:---------|
+| **claude**   | ✅          | ✅          | No      | Architecture, code review, broad reasoning |
+| **codex**    | ✅          | ❌          | Yes     | Implementation, refactors, test-driven changes |
+| **gemini**   | ✅          | ✅          | No      | Exploration, cross-checking, documentation |
+| **antigravity** | ✅       | ✅          | No      | Full-stack orchestration, deployment |
+| **openclaw** | ✅          | ❌          | Yes     | Scoped tasks via OpenClaw adapter |
+
+Key constraints:
+
+- **Codex runs in a strict sandbox** — no SSH, no external API calls, no network access. Do not assign deployment, remote verification, or API-calling tasks to Codex.
+- **Worktrees are based on the current branch HEAD** — uncommitted changes in the main working directory are NOT visible to spawned agents. Always `git add && git commit` before dispatching.

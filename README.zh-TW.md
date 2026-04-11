@@ -5,12 +5,14 @@
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](https://nodejs.org)
 
 > **AI Agent 的 tmux** — 一行命令啟動多 Agent 並行工作，無縫交接上下文。
+>
+> 🤖 **AI Agent 使用指南**：如果你是 AI 編程助手，請參閱 [docs/ai-skill.md](./docs/ai-skill.md) 獲取機器可讀的指令參考和編排指南。
 
 [English](./README.md) | 繁體中文
 
 ## 為什麼需要 Vibe-Switch？
 
-同時用 Claude Code、Codex、Gemini CLI 開發時，你會遇到：
+無論你是自己下指令，還是讓 AI 編排器自動調度多個 Agent，同時管理多個 AI Agent 都是一場認知噩夢。同時用 Claude Code、Codex、Gemini CLI 開發時，你會遇到：
 
 - **終端爆炸**：每個 Agent 開一個窗口，切來切去。
 - **上下文丟失**：Agent A 做完的東西，要手動複製給 Agent B。
