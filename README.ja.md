@@ -36,6 +36,8 @@ npm run build
 npm link
 ```
 
+> 💡 インストール後、CLI コマンドは **`vibe`** です（`vibe-switch` ではありません）。`vibe` と `vibe-switch` の両方が使用できますが、すべての例では `vibe` を使用しています。
+
 ## クイックスタート
 
 ### 1. 複数エージェントの起動

@@ -36,6 +36,8 @@ npm run build
 npm link
 ```
 
+> 💡 安装后，CLI 命令是 **`vibe`**（不是 `vibe-switch`）。`vibe` 和 `vibe-switch` 都能用，但所有示例统一使用 `vibe`。
+
 ## 快速上手
 
 ### 1. 启动多个 Agent
