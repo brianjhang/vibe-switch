@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2026-04-14
+
+### Fixed
+- **CLI command alias**: Added `vibe-switch` as an alternative bin entry alongside `vibe`. After `npm install -g vibe-switch`, both `vibe` and `vibe-switch` commands now work. This fixes a common issue where AI agents (and users) expected the command name to match the package name and reported "vibe-switch: command not found".
+
 ## [1.2.1] - 2026-04-11
 
 ### Added
