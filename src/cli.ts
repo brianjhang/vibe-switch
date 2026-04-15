@@ -27,7 +27,7 @@ program
   .command('run')
   .description('Start an Agent to run a task')
   .argument('<task>', 'Task description')
-  .option('-a, --agent <agent>', 'AI Agent name (claude/codex/gemini)', 'claude')
+  .option('-a, --agent <agent>', 'AI Agent name (claude/codex/gemini/aider/opencode)', 'claude')
   .option('-b, --branch <branch>', 'Custom Git branch name')
   .action(runCommand);
 

@@ -13,6 +13,8 @@ const agentNames: Record<TaskRecord['agent'], string> = {
   claude: 'Claude',
   codex: 'Codex',
   gemini: 'Gemini',
+  aider: 'Aider',
+  opencode: 'OpenCode',
 };
 
 function colorAgentLabel(
@@ -30,6 +32,12 @@ function colorAgentLabel(
       return chalk.cyan(label);
     case 'gemini':
       return chalk.yellow(label);
+    case 'aider':
+      return chalk.green(label);
+    case 'opencode':
+      return chalk.blue(label);
+    default:
+      return chalk.white(label);
   }
 }
 

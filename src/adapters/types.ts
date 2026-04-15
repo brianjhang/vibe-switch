@@ -3,7 +3,7 @@
  * Inspired by CC-Switch's Provider Adapter pattern.
  */
 
-export type AgentId = 'claude' | 'codex' | 'gemini';
+export type AgentId = 'claude' | 'codex' | 'gemini' | 'aider' | 'opencode';
 
 export interface AgentAdapter {
   /** Unique Agent identifier. */
