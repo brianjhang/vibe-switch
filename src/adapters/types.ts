@@ -38,8 +38,27 @@ export interface ContextSnapshot {
   modifiedFiles: string[];
   gitDiff: string;
 
+  // New/created file contents for handoff.
+  artifacts: ArtifactEntry[];
+
   // Pending items.
   pendingItems: string[];
+}
+
+/**
+ * A file artifact collected during handoff.
+ * Contains the full content of new/created files so the target agent
+ * can see what the source agent produced (not just a diff).
+ */
+export interface ArtifactEntry {
+  /** Path relative to the worktree root. */
+  path: string;
+  /** Full file content (text files only). */
+  content: string;
+  /** File size in bytes. */
+  sizeBytes: number;
+  /** Whether this is a newly created file (untracked or staged new). */
+  isNew: boolean;
 }
 
 /**

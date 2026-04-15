@@ -13,6 +13,7 @@ import * as output from '../utils/output.js';
 interface HandoffOptions {
   to: string;
   message?: string;
+  noArtifacts?: boolean;
 }
 
 export async function handoffCommand(branch: string, options: HandoffOptions): Promise<void> {
@@ -50,15 +51,21 @@ export async function handoffCommand(branch: string, options: HandoffOptions): P
 
   // 3. Generate a context snapshot.
   await output.info('Extracting context...');
+  const includeArtifacts = !options.noArtifacts;
   const snapshot = await createSnapshot(
     sourceTask.agent,
     sourceTask.task,
     sourceTask.branch,
     sourceCwd,
+    undefined,
+    includeArtifacts,
   );
 
   await output.info(`Modified files: ${snapshot.modifiedFiles.length}`);
   await output.info(`Git diff: ${snapshot.gitDiff.length} characters`);
+  if (snapshot.artifacts.length > 0) {
+    await output.info(`Artifacts: ${snapshot.artifacts.length} new file(s) included`);
+  }
 
   // 4. Format the context as a prompt.
   const prompt = formatSnapshotAsPrompt(snapshot, targetAgentId, options.message);

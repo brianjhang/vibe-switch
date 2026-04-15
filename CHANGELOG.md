@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-04-15
+
+### Added
+- **Handoff Artifacts**: `vibe handoff` now includes full content of newly created files in the handoff prompt. The target agent can immediately see what the source agent built, not just a truncated diff. Respects per-file (30KB) and total (100KB) size limits. Use `--no-artifacts` to disable.
+- **`vibe wait` command**: Block until a task finishes. Designed as a Unix-style building block for chaining tasks: `vibe wait vibe/codex-xxx && vibe handoff vibe/codex-xxx --to gemini`.
+
+### Changed
+- **Diff truncation limit**: Handoff diff limit raised from 3,000 to 8,000 characters for better context transfer.
+
 ## [1.2.2] - 2026-04-14
 
 ### Fixed

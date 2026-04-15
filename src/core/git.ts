@@ -73,6 +73,20 @@ export async function getModifiedFiles(cwd: string): Promise<string[]> {
 }
 
 /**
+ * Get newly created files (untracked + staged new).
+ * These are files that don't exist on the base branch and need their
+ * full content included in handoff artifacts.
+ */
+export async function getNewFiles(cwd: string): Promise<string[]> {
+  const git: SimpleGit = simpleGit(cwd);
+  const status = await git.status();
+  return [
+    ...status.created,    // staged new files ('A')
+    ...status.not_added,  // untracked files ('??')
+  ];
+}
+
+/**
  * Get diff stats.
  */
 export async function getDiffSummary(cwd: string, baseBranch?: string): Promise<string> {

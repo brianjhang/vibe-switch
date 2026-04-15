@@ -103,6 +103,7 @@ vibe clean         # 完了したタスクとworktreeをクリーンアップ
 | `vibe agents` | インストール済みエージェントとステータスを一覧表示 |
 | `vibe init` | プロジェクトレベルのvibe-switch設定を初期化 |
 | `vibe config` | 設定の表示または更新 |
+| `vibe wait` | タスクの完了を待機（`&&` でチェーン可能） |
 
 ## 対応エージェント
 

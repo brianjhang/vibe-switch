@@ -107,6 +107,7 @@ vibe clean         # Clean up finished tasks and worktrees
 | `vibe agents` | List installed agents and their status |
 | `vibe init` | Initialize project-level vibe-switch config |
 | `vibe config` | View or update configuration |
+| `vibe wait` | Block until a task finishes (for chaining with `&&`) |
 
 ## Supported Agents
 

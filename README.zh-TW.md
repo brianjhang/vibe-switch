@@ -103,6 +103,7 @@ vibe clean         # 清理已完成的任務和 worktree
 | `vibe agents` | 列出已安裝的 Agent 及狀態 |
 | `vibe init` | 初始化項目的 vibe-switch 配置 |
 | `vibe config` | 查看或設定配置 |
+| `vibe wait` | 等待任務完成（可用 `&&` 串接下一步） |
 
 ## 支援的 Agent
 

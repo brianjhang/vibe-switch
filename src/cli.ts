@@ -13,13 +13,14 @@ import { summaryCommand } from './commands/summary.js';
 import { initCommand } from './commands/init.js';
 import { configCommand } from './commands/config.js';
 import { doctorCommand } from './commands/doctor.js';
+import { waitCommand } from './commands/wait.js';
 
 const program = new Command();
 
 program
   .name('vibe')
   .description('tmux for AI Agents - start multiple Agents in parallel with one command')
-  .version('1.2.2');
+  .version('1.3.0');
 
 // vibe run "task description" --agent claude
 program
@@ -98,7 +99,15 @@ program
   .argument('<branch>', 'Source task branch name')
   .requiredOption('--to <agent>', 'Target Agent')
   .option('-m, --message <message>', 'Additional handoff notes')
+  .option('--no-artifacts', 'Skip including new file contents in handoff')
   .action(handoffCommand);
+
+// vibe wait <branch>
+program
+  .command('wait')
+  .description('Block until a task finishes (use with && to chain)')
+  .argument('<branch>', 'Task branch name to wait for')
+  .action(waitCommand);
 
 // vibe doctor
 program
